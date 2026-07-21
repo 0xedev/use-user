@@ -2,6 +2,15 @@ import { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { 
+  ArrowLeft, 
+  ShieldCheck, 
+  MapPin, 
+  ChevronRight, 
+  ChevronDown, 
+  Edit2, 
+  Wallet 
+} from 'lucide-react-native';
 import tw from '@/lib/tw';
 
 const orderItems = [
@@ -24,34 +33,32 @@ export default function CheckoutReviewScreen() {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
-      {/* Header */}
-      <View style={tw`px-4 py-3 flex-row items-center justify-between`}>
+      {/* Header Block */}
+      <View style={tw`px-4 py-3 flex-row items-center justify-between border-b border-gray-50`}>
         <View style={tw`flex-row items-center gap-3`}>
           <TouchableOpacity onPress={() => router.back()}>
-            <Text style={tw`text-xl text-gray-900`}>←</Text>
+            <ArrowLeft size={24} color="#171717" />
           </TouchableOpacity>
           <View>
             <Text style={tw`text-xl font-bold text-gray-900`}>Checkout</Text>
-            <Text style={tw`text-xs text-gray-500`}>Step 3 of 4</Text>
+            <Text style={tw`text-[10px] text-gray-400 font-semibold`}>Step 3 of 4</Text>
           </View>
         </View>
-        <View style={tw`flex-row items-center gap-1`}>
-          <Text style={tw`text-market-green`}>🛡️</Text>
-          <Text style={tw`text-xs text-market-green font-semibold`}>100% Secure</Text>
+        <View style={tw`flex-row items-center gap-1 bg-[#F2FBF6] px-2.5 py-1.5 rounded-lg`}>
+          <ShieldCheck size={14} color="#0A8A3A" />
+          <Text style={tw`text-[10px] text-market-green font-bold`}>100% Secure</Text>
         </View>
       </View>
 
-      {/* Stepper */}
-      <View style={tw`px-4 py-3 flex-row items-center justify-between`}>
+      {/* Stepper Progress */}
+      <View style={tw`px-4 py-3 flex-row items-center justify-between bg-gray-50/30`}>
         {steps.map((step, i) => (
           <View key={step.id} style={tw`flex-row items-center flex-1`}>
             <View style={tw`items-center`}>
-              <View style={tw`w-8 h-8 rounded-full items-center justify-center ${step.active ? 'bg-market-green' : step.completed ? 'bg-market-green' : 'bg-gray-200'}`}>
-                <Text style={tw`text-sm font-bold ${step.active || step.completed ? 'text-white' : 'text-gray-500'}`}>
-                  {step.completed ? '✓' : step.id}
-                </Text>
+              <View style={tw`w-8 h-8 rounded-full items-center justify-center ${step.active || step.completed ? 'bg-market-green' : 'bg-gray-200'}`}>
+                <Text style={tw`text-xs font-bold text-white`}>{step.completed ? '✓' : step.id}</Text>
               </View>
-              <Text style={tw`text-[10px] mt-1 ${step.active ? 'text-market-green font-semibold' : step.completed ? 'text-market-green' : 'text-gray-500'}`}>{step.label}</Text>
+              <Text style={tw`text-[9px] mt-1 font-semibold ${step.active ? 'text-market-green font-bold' : 'text-gray-400'}`}>{step.label}</Text>
             </View>
             {i < steps.length - 1 && <View style={tw`flex-1 h-px bg-gray-200 mx-2 mb-4`} />}
           </View>
@@ -59,152 +66,155 @@ export default function CheckoutReviewScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Savings Banner */}
-        <View style={tw`mx-4 bg-market-green-light rounded-xl p-3 flex-row items-center justify-between mb-4`}>
-          <View style={tw`flex-row items-center gap-2`}>
+        {/* Savings Promotion Banner */}
+        <View style={tw`mx-4 mt-4 bg-market-green-light rounded-2xl p-4 flex-row items-center justify-between mb-4`}>
+          <View style={tw`flex-row items-center gap-2.5`}>
             <Text style={tw`text-xl`}>🏷️</Text>
-            <Text style={tw`text-sm text-gray-700`}>You're saving <Text style={tw`font-bold text-market-green`}>₦1,450</Text> on this order</Text>
+            <Text style={tw`text-xs text-gray-700 font-medium`}>
+              You're saving <Text style={tw`font-bold text-market-green`}>₦1,450</Text> on this order
+            </Text>
           </View>
-          <TouchableOpacity style={tw`flex-row items-center gap-1`}>
-            <Text style={tw`text-sm text-market-green font-semibold`}>View offers</Text>
-            <Text style={tw`text-market-green`}>→</Text>
+          <TouchableOpacity style={tw`flex-row items-center`}>
+            <Text style={tw`text-xs text-market-green font-bold`}>View offers</Text>
+            <ChevronRight size={14} color="#0A8A3A" style={tw`ml-0.5`} />
           </TouchableOpacity>
         </View>
 
-        {/* Delivering To */}
-        <View style={tw`mx-4 bg-white rounded-xl border border-gray-100 p-4 mb-4`}>
-          <Text style={tw`text-base font-bold text-gray-900 mb-3`}>Delivering to</Text>
+        {/* Delivering To Block */}
+        <View style={tw`mx-4 bg-white rounded-2xl border border-gray-100 p-4 mb-4 shadow-sm`}>
+          <Text style={tw`text-sm font-bold text-gray-900 mb-3`}>Delivering to</Text>
           <View style={tw`flex-row items-start gap-3`}>
-            <Text style={tw`text-market-green text-xl mt-0.5`}>📍</Text>
+            <MapPin size={22} color="#0A8A3A" style={tw`mt-0.5`} />
             <View style={tw`flex-1`}>
-              <Text style={tw`text-sm font-semibold text-gray-900`}>23 Greenway Street,{'\n'}Lekki Phase 1, Lagos</Text>
+              <Text style={tw`text-sm font-bold text-gray-900 leading-5`}>23 Greenway Street,{'\n'}Lekki Phase 1, Lagos</Text>
               <View style={tw`flex-row items-center gap-2 mt-2`}>
-                <View style={tw`bg-market-green-light px-2 py-1 rounded`}>
-                  <Text style={tw`text-xs text-market-green font-medium`}>Home</Text>
+                <View style={tw`bg-market-green-light px-2 py-0.5 rounded border border-market-green/20`}>
+                  <Text style={tw`text-[10px] text-market-green font-bold`}>Home</Text>
                 </View>
-                <Text style={tw`text-xs text-market-green`}>• Add delivery note</Text>
+                <Text style={tw`text-xs text-market-green font-semibold`}>• Add delivery note</Text>
               </View>
             </View>
-            <TouchableOpacity style={tw`flex-row items-center gap-1`}>
-              <Text style={tw`text-sm text-market-green font-semibold`}>Change</Text>
-              <Text style={tw`text-market-green`}>→</Text>
+            <TouchableOpacity style={tw`flex-row items-center`}>
+              <Text style={tw`text-xs text-market-green font-bold`}>Change</Text>
+              <ChevronRight size={14} color="#0A8A3A" style={tw`ml-0.5`} />
             </TouchableOpacity>
           </View>
 
-          {/* Delivery Option */}
-          <View style={tw`flex-row items-center gap-3 mt-3 pt-3 border-t border-gray-100`}>
-            <Text style={tw`text-2xl`}>🛵</Text>
+          {/* Delivery Option Details Inline */}
+          <View style={tw`flex-row items-center gap-3.5 mt-4 pt-4 border-t border-gray-100`}>
+            <View style={tw`w-10 h-10 bg-[#F2FBF6] rounded-full items-center justify-center`}>
+              <Text style={tw`text-xl`}>🛵</Text>
+            </View>
             <View style={tw`flex-1`}>
-              <Text style={tw`text-sm font-semibold text-gray-900`}>Delivery Option</Text>
-              <Text style={tw`text-xs text-gray-500`}>Standard Delivery</Text>
-              <Text style={tw`text-xs text-gray-500`}>20-30 mins</Text>
+              <Text style={tw`text-xs text-gray-400 font-semibold`}>Delivery Option</Text>
+              <Text style={tw`text-sm font-bold text-gray-900 mt-0.5`}>Standard Delivery</Text>
+              <Text style={tw`text-xs text-gray-500 font-medium`}>20-30 mins</Text>
             </View>
             <View style={tw`items-end`}>
-              <Text style={tw`text-sm text-gray-900`}>₦1,000</Text>
-              <Text style={tw`text-xs text-market-green`}>FREE on orders above ₦10,000</Text>
-              <TouchableOpacity>
-                <Text style={tw`text-xs text-market-green font-semibold`}>Change →</Text>
+              <Text style={tw`text-sm font-bold text-gray-900`}>₦1,000</Text>
+              <Text style={tw`text-[9px] text-market-green font-bold mt-0.5`}>FREE on orders above ₦10,000</Text>
+              <TouchableOpacity style={tw`flex-row items-center mt-1`}>
+                <Text style={tw`text-[10px] text-market-green font-bold`}>Change</Text>
+                <ChevronRight size={12} color="#0A8A3A" style={tw`ml-0.5`} />
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
-        {/* Items */}
-        <View style={tw`mx-4 bg-white rounded-xl border border-gray-100 p-4 mb-4`}>
+        {/* Items List */}
+        <View style={tw`mx-4 bg-white rounded-2xl border border-gray-100 p-4 mb-4 shadow-sm`}>
           <View style={tw`flex-row justify-between items-center mb-3`}>
-            <Text style={tw`text-base font-bold text-gray-900`}>Items (4)</Text>
-            <TouchableOpacity>
-              <Text style={tw`text-sm text-market-green font-semibold`}>Edit Cart</Text>
+            <Text style={tw`text-sm font-bold text-gray-900`}>Items (4)</Text>
+            <TouchableOpacity style={tw`flex-row items-center gap-1`}>
+              <Text style={tw`text-xs text-market-green font-bold`}>Edit Cart</Text>
             </TouchableOpacity>
           </View>
           {orderItems.map((item) => (
             <View key={item.id} style={tw`flex-row items-center gap-3 py-3 border-b border-gray-100 last:border-0`}>
-              <Image source={item.image} style={tw`w-16 h-16 rounded-lg`} resizeMode="cover" />
+              <Image source={item.image} style={tw`w-14 h-14 rounded-xl`} resizeMode="cover" />
               <View style={tw`flex-1`}>
-                <Text style={tw`text-sm font-semibold text-gray-900`}>{item.name}</Text>
-                <Text style={tw`text-xs text-gray-500 mt-0.5`}>{item.qty}</Text>
+                <Text style={tw`text-sm font-bold text-gray-900`}>{item.name}</Text>
+                <Text style={tw`text-xs text-gray-400 font-medium mt-0.5`}>{item.qty}</Text>
               </View>
-              <View style={tw`bg-gray-100 px-3 py-1 rounded-lg`}>
-                <Text style={tw`text-sm text-gray-700`}>{item.quantity}</Text>
+              {/* Quantity Marker Box */}
+              <View style={tw`bg-[#F2FBF6] border border-market-green/20 w-8 h-8 rounded-lg items-center justify-center mr-3`}>
+                <Text style={tw`text-xs font-bold text-market-green`}>{item.quantity}</Text>
               </View>
               <View style={tw`items-end`}>
                 <Text style={tw`text-sm font-bold text-gray-900`}>{item.price}</Text>
-                {item.oldPrice && <Text style={tw`text-xs text-gray-400 line-through`}>{item.oldPrice}</Text>}
+                {item.oldPrice && <Text style={tw`text-[10px] text-gray-400 line-through`}>{item.oldPrice}</Text>}
               </View>
             </View>
           ))}
         </View>
 
-        {/* Payment Method */}
-        <View style={tw`mx-4 bg-white rounded-xl border border-gray-100 p-4 mb-4 flex-row items-center justify-between`}>
-          <View style={tw`flex-row items-center gap-3`}>
-            <Text style={tw`text-2xl`}>👛</Text>
+        {/* Payment Method Block */}
+        <View style={tw`mx-4 bg-white rounded-2xl border border-gray-100 p-4 mb-4 flex-row items-center justify-between shadow-sm`}>
+          <View style={tw`flex-row items-center gap-3.5`}>
+            <View style={tw`w-10 h-10 bg-[#F2FBF6] rounded-full items-center justify-center`}>
+              <Wallet size={20} color="#0A8A3A" />
+            </View>
             <View>
-              <Text style={tw`text-sm text-gray-500`}>Payment Method</Text>
-              <Text style={tw`text-sm font-semibold text-gray-900`}>useMarket Wallet</Text>
+              <Text style={tw`text-xs text-gray-400 font-semibold`}>Payment Method</Text>
+              <Text style={tw`text-sm font-bold text-gray-900 mt-0.5`}>useMarket Wallet</Text>
             </View>
           </View>
           <View style={tw`items-end`}>
-            <TouchableOpacity>
-              <Text style={tw`text-sm text-market-green font-semibold`}>Change →</Text>
+            <TouchableOpacity style={tw`flex-row items-center`}>
+              <Text style={tw`text-xs text-market-green font-bold`}>Change</Text>
+              <ChevronRight size={14} color="#0A8A3A" style={tw`ml-0.5`} />
             </TouchableOpacity>
-            <Text style={tw`text-sm text-market-green font-bold`}>-₦2,350</Text>
+            <Text style={tw`text-xs text-market-green font-bold mt-1`}>-₦2,350</Text>
           </View>
         </View>
 
-        {/* Bill Summary */}
-        <View style={tw`mx-4 bg-white rounded-xl border border-gray-100 p-4 mb-4`}>
-          <Text style={tw`text-base font-bold text-gray-900 mb-3`}>Bill Summary</Text>
-          <View style={tw`gap-2`}>
+        {/* Bill Summary Table */}
+        <View style={tw`mx-4 bg-white rounded-2xl border border-gray-100 p-5 mb-6 shadow-sm`}>
+          <Text style={tw`text-sm font-bold text-gray-900 mb-3`}>Bill Summary</Text>
+          <View style={tw`gap-2.5`}>
             <View style={tw`flex-row justify-between`}>
-              <Text style={tw`text-sm text-gray-600`}>Item Total (4 items)</Text>
-              <Text style={tw`text-sm text-gray-900`}>₦9,300</Text>
+              <Text style={tw`text-xs text-gray-500 font-medium`}>Item Total (4 items)</Text>
+              <Text style={tw`text-xs font-semibold text-gray-900`}>₦9,300</Text>
             </View>
             <View style={tw`flex-row justify-between`}>
-              <View style={tw`flex-row items-center gap-1`}>
-                <Text style={tw`text-sm text-gray-600`}>Delivery Fee</Text>
-                <Text style={tw`text-gray-400`}>ⓘ</Text>
-              </View>
-              <Text style={tw`text-sm text-gray-900`}>₦1,000</Text>
+              <Text style={tw`text-xs text-gray-500 font-medium`}>Delivery Fee</Text>
+              <Text style={tw`text-xs font-semibold text-gray-900`}>₦1,000</Text>
             </View>
             <View style={tw`flex-row justify-between`}>
-              <View style={tw`flex-row items-center gap-1`}>
-                <Text style={tw`text-sm text-gray-600`}>Handling Fee</Text>
-                <Text style={tw`text-gray-400`}>ⓘ</Text>
-              </View>
-              <Text style={tw`text-sm text-gray-900`}>₦100</Text>
+              <Text style={tw`text-xs text-gray-500 font-medium`}>Handling Fee</Text>
+              <Text style={tw`text-xs font-semibold text-gray-900`}>₦100</Text>
             </View>
             <View style={tw`flex-row justify-between`}>
-              <Text style={tw`text-sm text-market-green font-semibold`}>Discount</Text>
-              <Text style={tw`text-sm text-market-green font-semibold`}>- ₦1,450</Text>
+              <Text style={tw`text-xs text-market-green font-semibold`}>Discount</Text>
+              <Text style={tw`text-xs text-market-green font-bold`}>- ₦1,450</Text>
             </View>
-            <View style={tw`h-px bg-gray-200 my-1`} />
+            <View style={tw`h-px bg-gray-100 my-1.5`} />
             <View style={tw`flex-row justify-between items-center`}>
-              <Text style={tw`text-base font-bold text-gray-900`}>To Pay</Text>
-              <Text style={tw`text-xl font-bold text-gray-900`}>₦8,950</Text>
+              <Text style={tw`text-sm font-bold text-gray-950`}>To Pay</Text>
+              <Text style={tw`text-lg font-bold text-gray-950`}>₦8,950</Text>
             </View>
-            <View style={tw`flex-row items-center gap-1 mt-1 bg-market-green-light self-start px-2 py-1 rounded`}>
-              <Text style={tw`text-market-green`}>🛡️</Text>
-              <Text style={tw`text-xs text-market-green`}>Yay! You are saving ₦1,450 on this order</Text>
+            <View style={tw`flex-row items-center gap-1.5 mt-2 bg-[#F2FBF6] self-start px-3 py-1.5 rounded-lg border border-market-green/20`}>
+              <Text style={tw`text-[10px] text-market-green font-bold`}>✓ Yay! You are saving ₦1,450 on this order</Text>
             </View>
           </View>
         </View>
       </ScrollView>
 
-      {/* Bottom Place Order */}
+      {/* Place Order CTA Bottom Bar */}
       <View style={tw`px-4 py-3 border-t border-gray-100 flex-row items-center gap-3 bg-white`}>
-        <View style={tw`flex-1`}>
-          <Text style={tw`text-xs text-gray-500`}>Total Payable</Text>
-          <Text style={tw`text-xl font-bold text-gray-900`}>₦8,950</Text>
-          <TouchableOpacity onPress={() => setShowPriceDetails(!showPriceDetails)}>
-            <Text style={tw`text-xs text-market-green font-semibold`}>View price details ▼</Text>
+        <View style={tw`flex-1 pr-1`}>
+          <Text style={tw`text-[10px] text-gray-400 font-semibold`}>Total Payable</Text>
+          <Text style={tw`text-xl font-bold text-gray-950 mt-0.5`}>₦8,950</Text>
+          <TouchableOpacity onPress={() => setShowPriceDetails(!showPriceDetails)} style={tw`flex-row items-center mt-1`}>
+            <Text style={tw`text-[10px] text-market-green font-bold`}>View price details</Text>
+            <ChevronDown size={12} color="#0A8A3A" style={tw`ml-0.5`} />
           </TouchableOpacity>
         </View>
         <TouchableOpacity 
-          style={tw`flex-1 bg-market-green py-3.5 rounded-xl flex-row items-center justify-center gap-2`}
+          style={tw`flex-1 bg-market-green h-13 rounded-xl flex-row items-center justify-between px-5`}
           onPress={() => router.push('/checkout/confirm')}>
-          <Text style={tw`text-white text-base font-semibold`}>Place Order</Text>
-          <Text style={tw`text-white`}>→</Text>
+          <Text style={tw`text-white text-base font-bold`}>Place Order</Text>
+          <ChevronRight size={18} color="white" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>

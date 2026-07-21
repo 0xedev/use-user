@@ -1,7 +1,7 @@
-import { Tabs } from 'expo-router';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import tw from '@/lib/tw';
+import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -11,7 +11,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: '#0A8A3A',
         tabBarInactiveTintColor: '#999',
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: false,
         tabBarStyle: tw`bg-white border-t border-gray-200 h-16 pb-2`,
         tabBarLabelStyle: tw`text-xs font-medium mt-1`,
       }}>
@@ -19,8 +19,12 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => (
-            <Text style={[tw`text-2xl`, { color }]}>🏠</Text>
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={22}
+              color={color}
+            />
           ),
         }}
       />
@@ -28,8 +32,12 @@ export default function TabLayout() {
         name="categories"
         options={{
           title: 'Categories',
-          tabBarIcon: ({ color }) => (
-            <Text style={[tw`text-2xl`, { color }]}>⊞</Text>
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "grid" : "grid-outline"}
+              size={22}
+              color={color}
+            />
           ),
         }}
       />
@@ -37,8 +45,12 @@ export default function TabLayout() {
         name="orders"
         options={{
           title: 'Orders',
-          tabBarIcon: ({ color }) => (
-            <Text style={[tw`text-2xl`, { color }]}>🛍️</Text>
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "receipt" : "receipt-outline"}
+              size={22}
+              color={color}
+            />
           ),
         }}
       />
@@ -46,8 +58,12 @@ export default function TabLayout() {
         name="wallet"
         options={{
           title: 'Wallet',
-          tabBarIcon: ({ color }) => (
-            <Text style={[tw`text-2xl`, { color }]}>💳</Text>
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "wallet" : "wallet-outline"}
+              size={22}
+              color={color}
+            />
           ),
         }}
       />
@@ -55,11 +71,19 @@ export default function TabLayout() {
         name="account"
         options={{
           title: 'Account',
-          tabBarIcon: ({ color }) => (
-            <Text style={[tw`text-2xl`, { color }]}>👤</Text>
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={22}
+              color={color}
+            />
           ),
         }}
       />
+      <Tabs.Screen name="home-alt" options={{ href: null }} />
+      <Tabs.Screen name="category-detail" options={{ href: null }} />
+      <Tabs.Screen name="two" options={{ href: null }} />
+      <Tabs.Screen name="category/[id]" options={{ href: null }} />
     </Tabs>
   );
 }
