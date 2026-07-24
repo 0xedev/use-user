@@ -1,12 +1,13 @@
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from '@/lib/tw';
 
 const sidebarCategories = [
-  { name: 'All', icon: '🛒', active: false },
-  { name: 'Market', icon: '🥬', active: false },
-  { name: 'Supermarket', icon: '🛒', active: false },
+  { name: 'All', icon: '🛍️', active: false },
+  { name: 'Market', icon: '🛒', active: false },
+  { name: 'Supermarket', icon: '🏪', active: false },
   { name: 'Food', icon: '🍔', active: false },
   { name: 'Pharmacy', icon: '💊', active: true },
   { name: 'Meat & Fish', icon: '🥩', active: false },
@@ -38,25 +39,28 @@ const topCategories = [
 
 export default function CategoriesScreen() {
   const router = useRouter();
+  const [activeSidebar, setActiveSidebar] = useState('Pharmacy');
+
+  const slugify = (name: string) => name.toLowerCase().replace(/\s*&\s*/g, '-').replace(/\s+/g, '-');
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
       {/* Header */}
       <View style={tw`flex-row items-center justify-between px-4 pt-2 pb-3`}>
-        <View style={tw`flex-row items-center gap-1`}>
+        <View style={tw`flex-row items-center gap-1 flex-1`}>
           <Text style={tw`text-lg text-market-green`}>📍</Text>
-          <View>
-            <Text style={tw`text-xs text-gray-500`}>Deliver to</Text>
-            <Text style={tw`text-sm font-semibold text-gray-900`}>23 Greenway Street, Lekki Phase 1, Lagos</Text>
+          <View style={tw`flex-1`}>
+            <Text style={tw`text-[10px] text-gray-500`}>Deliver to</Text>
+            <Text style={tw`text-xs font-semibold text-gray-900`} numberOfLines={1}>23 Greenway Street, Lekki Phase 1</Text>
           </View>
           <Text style={tw`text-xs text-gray-400`}>▼</Text>
         </View>
-        <View style={tw`flex-row gap-3`}>
-          <TouchableOpacity>
-            <Text style={tw`text-2xl`}>🔔</Text>
+        <View style={tw`flex-row gap-3 ml-3`}>
+          <TouchableOpacity style={tw`w-9 h-9 items-center justify-center`}>
+            <Text style={tw`text-xl`}>🔔</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={tw`text-2xl`}>🛒</Text>
+          <TouchableOpacity style={tw`w-9 h-9 items-center justify-center`}>
+            <Text style={tw`text-xl`}>🛒</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -75,14 +79,15 @@ export default function CategoriesScreen() {
 
       <View style={tw`flex-1 flex-row`}>
         {/* Sidebar */}
-        <ScrollView style={tw`w-28 bg-gray-50`} showsVerticalScrollIndicator={false}>
+        <ScrollView style={tw`w-20 bg-gray-50`} showsVerticalScrollIndicator={false}>
           {sidebarCategories.map((cat) => (
             <TouchableOpacity 
               key={cat.name} 
-              style={tw`items-center py-4 px-2 ${cat.active ? 'bg-white border-l-4 border-market-green' : ''}`}
+              onPress={() => setActiveSidebar(cat.name)}
+              style={tw`items-center py-4 px-2 ${activeSidebar === cat.name ? 'bg-white border-l-4 border-market-green' : ''}`}
             >
-              <Text style={tw`text-2xl mb-1`}>{cat.icon}</Text>
-              <Text style={tw`text-xs text-center ${cat.active ? 'text-market-green font-semibold' : 'text-gray-600'}`}>
+              <Text style={tw`text-xl mb-0.5`}>{cat.icon}</Text>
+              <Text style={tw`text-[10px] text-center ${activeSidebar === cat.name ? 'text-market-green font-semibold' : 'text-gray-600'}`} numberOfLines={1}>
                 {cat.name}
               </Text>
             </TouchableOpacity>
@@ -93,13 +98,15 @@ export default function CategoriesScreen() {
         <ScrollView style={tw`flex-1`} showsVerticalScrollIndicator={false}>
           {/* Hero Banner */}
           <View style={tw`mx-3 mt-3 bg-market-green rounded-2xl p-4 relative overflow-hidden`}>
-            <Text style={tw`text-xl font-bold text-white`}>Groceries{'\n'}delivered in</Text>
-            <Text style={tw`text-2xl font-bold text-yellow-300`}>30 minutes</Text>
-            <Text style={tw`text-sm text-white/80 mt-2`}>Fresh food, everyday{'\n'}essentials to your doorstep.</Text>
-            <TouchableOpacity style={tw`bg-white px-4 py-2 rounded-xl mt-3 self-start flex-row items-center gap-1`}>
-              <Text style={tw`text-sm font-semibold text-market-green`}>Shop Now</Text>
-              <Text style={tw`text-market-green`}>→</Text>
-            </TouchableOpacity>
+            <View style={tw`flex-1 pr-28`}>
+              <Text style={tw`text-lg font-bold text-white`}>Groceries{'\n'}delivered in</Text>
+              <Text style={tw`text-xl font-bold text-yellow-300`}>30 minutes</Text>
+              <Text style={tw`text-xs text-white/70 mt-1.5`}>Fresh food, everyday essentials to your doorstep.</Text>
+              <TouchableOpacity style={tw`bg-white px-3 py-1.5 rounded-lg mt-2.5 self-start flex-row items-center gap-1`}>
+                <Text style={tw`text-xs font-semibold text-market-green`}>Shop Now</Text>
+                <Text style={tw`text-market-green text-xs`}>→</Text>
+              </TouchableOpacity>
+            </View>
             <Image 
               source={require('@/assets/images/grocery-bag-hero.png')} 
               style={tw`w-28 h-28 absolute right-0 bottom-0`} 
@@ -122,8 +129,8 @@ export default function CategoriesScreen() {
             {topCategories.map((cat, i) => (
               <TouchableOpacity 
                 key={cat.name} 
-                style={tw`flex-row items-center bg-white border border-gray-100 rounded-xl p-3 ${i % 2 === 0 ? '' : ''}`}
-                onPress={() => router.push('/(tabs)/category/fruits')}
+                style={tw`flex-row items-center bg-white border border-gray-100 rounded-xl p-3`}
+                onPress={() => router.push(`/(tabs)/category/${slugify(cat.name)}`)}
               >
                 <View style={tw`w-14 h-14 rounded-full bg-gray-100 items-center justify-center mr-3`}>
                   <Text style={tw`text-2xl`}>{cat.icon}</Text>
@@ -148,44 +155,37 @@ export default function CategoriesScreen() {
               <Text style={tw`text-3xl ml-auto`}>🛵</Text>
             </View>
             
-            <View style={tw`bg-yellow-50 rounded-xl p-4 flex-row items-center`}>
-              <View style={tw`w-10 h-10 rounded-full bg-yellow-400 items-center justify-center mr-3`}>
-                <Text style={tw`text-xl`}>%</Text>
+            <View style={tw`bg-yellow-50 rounded-xl p-4 flex-row items-center justify-between`}>
+              <View style={tw`flex-row items-center gap-3 flex-1`}>
+                <View style={tw`w-10 h-10 rounded-full bg-yellow-400 items-center justify-center`}>
+                  <Text style={tw`text-lg font-bold`}>%</Text>
+                </View>
+                <View>
+                  <Text style={tw`text-sm font-semibold text-gray-900`}>Save more with Best Deals</Text>
+                  <Text style={tw`text-xs text-gray-500 mt-0.5`}>Check out our offers & discounts</Text>
+                </View>
               </View>
-              <View style={tw`flex-1`}>
-                <Text style={tw`text-sm font-semibold text-gray-900`}>Save more with</Text>
-                <Text style={tw`text-base font-bold text-market-green`}>Best Deals</Text>
-                <Text style={tw`text-xs text-gray-500`}>Check out our offers & discounts</Text>
-              </View>
-              <TouchableOpacity style={tw`bg-yellow-400 px-4 py-2 rounded-lg flex-row items-center gap-1`}>
-                <Text style={tw`text-sm font-semibold text-gray-900`}>View Deals</Text>
-                <Text>→</Text>
-              </TouchableOpacity>
-              <Text style={tw`text-3xl ml-2`}>🎁</Text>
+              <Text style={tw`text-2xl`}>🎁</Text>
             </View>
           </View>
 
           {/* Trust Badges */}
-          <View style={tw`flex-row justify-around bg-gray-50 rounded-xl p-4 mx-3 mt-4 mb-4`}>
-            <View style={tw`items-center gap-1`}>
-              <Text style={tw`text-xl`}>🛵</Text>
-              <Text style={tw`text-xs font-semibold text-gray-900`}>Fast Delivery</Text>
-              <Text style={tw`text-[10px] text-gray-500 text-center`}>Get your order{'\n'}in no time</Text>
+          <View style={tw`flex-row justify-around bg-gray-50 rounded-xl p-3 mx-3 mt-4 mb-4 gap-1`}>
+            <View style={tw`items-center gap-0.5 flex-1`}>
+              <Text style={tw`text-lg`}>🛵</Text>
+              <Text style={tw`text-[10px] font-semibold text-gray-900`}>Fast Delivery</Text>
             </View>
-            <View style={tw`items-center gap-1`}>
-              <Text style={tw`text-xl`}>💰</Text>
-              <Text style={tw`text-xs font-semibold text-gray-900`}>Best Prices</Text>
-              <Text style={tw`text-[10px] text-gray-500 text-center`}>Enjoy amazing{'\n'}deals daily</Text>
+            <View style={tw`items-center gap-0.5 flex-1`}>
+              <Text style={tw`text-lg`}>💰</Text>
+              <Text style={tw`text-[10px] font-semibold text-gray-900`}>Best Prices</Text>
             </View>
-            <View style={tw`items-center gap-1`}>
-              <Text style={tw`text-xl`}>🔒</Text>
-              <Text style={tw`text-xs font-semibold text-gray-900`}>Secure Payment</Text>
-              <Text style={tw`text-[10px] text-gray-500 text-center`}>100% secure{'\n'}transactions</Text>
+            <View style={tw`items-center gap-0.5 flex-1`}>
+              <Text style={tw`text-lg`}>🔒</Text>
+              <Text style={tw`text-[10px] font-semibold text-gray-900`}>Secure Payment</Text>
             </View>
-            <View style={tw`items-center gap-1`}>
-              <Text style={tw`text-xl`}>🎧</Text>
-              <Text style={tw`text-xs font-semibold text-gray-900`}>Live Support</Text>
-              <Text style={tw`text-[10px] text-gray-500 text-center`}>We're here to{'\n'}help you</Text>
+            <View style={tw`items-center gap-0.5 flex-1`}>
+              <Text style={tw`text-lg`}>🎧</Text>
+              <Text style={tw`text-[10px] font-semibold text-gray-900`}>Live Support</Text>
             </View>
           </View>
         </ScrollView>

@@ -41,6 +41,13 @@ export default function WalletScreen() {
   const [selectedFunding, setSelectedFunding] = useState('upi');
   const [filterApplied, setFilterApplied] = useState(false);
 
+  const [dateRange, setDateRange] = useState<'7' | '30' | 'custom'>('30');
+  const [fromDate, setFromDate] = useState('01 Apr 2024');
+  const [toDate, setToDate] = useState('12 May 2024');
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(['Money In', 'Money Out', 'Payments', 'Offers', 'Refunds']);
+  const [minAmount, setMinAmount] = useState('0');
+  const [maxAmount, setMaxAmount] = useState('100000');
+
   // Simulated transaction detail target state
   const [activeTxn, setActiveTxn] = useState({
     id: 'UMW24052509411234',
@@ -122,27 +129,62 @@ export default function WalletScreen() {
       {currentView === 'dashboard' && (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-6`}>
           {/* Balance Card Block */}
-          <View style={tw`mx-4 mt-4 bg-market-green rounded-3xl p-6 relative overflow-hidden shadow-md`}>
-            <Text style={tw`text-white/80 text-xs font-semibold uppercase tracking-wider`}>useMarket Wallet Balance</Text>
-            <View style={tw`flex-row items-center gap-3 mt-2`}>
-              <Text style={tw`text-white text-3xl font-bold`}>
-                {showBalance ? '₦4,250.00' : '••••••'}
+          <View style={tw`mx-4 mt-4 bg-market-green rounded-2xl p-4 relative overflow-hidden shadow-md`}>
+            {/* Top row */}
+            <View style={tw`flex-row justify-between items-start`}>
+              <View>
+                <Text style={tw`text-white/70 text-[10px] font-semibold uppercase tracking-widest`}>useMarket Wallet</Text>
+                <Text style={tw`text-white/50 text-[9px] font-medium`}>Available Balance</Text>
+              </View>
+              <View style={tw`bg-white/20 rounded-full w-7 h-7 items-center justify-center`}>
+                <Wallet size={14} color="white" />
+              </View>
+            </View>
+
+            {/* Balance */}
+            <View style={tw`flex-row items-baseline gap-1.5 mt-1.5`}>
+              <Text style={tw`text-white text-[10px] font-semibold opacity-70`}>₦</Text>
+              <Text style={tw`text-white text-3xl font-extrabold tracking-tight`}>
+                {showBalance ? '4,250.00' : '••••••'}
               </Text>
-              <TouchableOpacity onPress={() => setShowBalance(!showBalance)}>
-                {showBalance ? <EyeOff size={20} color="white" /> : <Eye size={20} color="white" />}
+              <TouchableOpacity onPress={() => setShowBalance(!showBalance)} style={tw`ml-0.5`}>
+                {showBalance ? <EyeOff size={16} color="rgba(255,255,255,0.6)" /> : <Eye size={16} color="rgba(255,255,255,0.6)" />}
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              onPress={() => setCurrentView('add_money')}
-              style={tw`border border-white/30 bg-white/10 rounded-xl px-4 py-2.5 mt-6 self-start flex-row items-center gap-2`}
-            >
-              <Plus size={16} color="white" />
-              <Text style={tw`text-white text-sm font-bold`}>Add Money</Text>
-            </TouchableOpacity>
+            {/* Card Number-like info */}
+            <View style={tw`flex-row items-center gap-3 mt-2.5`}>
+              <View>
+                <Text style={tw`text-white/40 text-[8px] font-semibold uppercase`}>Wallet ID</Text>
+                <Text style={tw`text-white/60 text-[10px] font-bold`}>UMW •••• 4532</Text>
+              </View>
+              <View style={tw`w-px h-5 bg-white/20`} />
+              <View>
+                <Text style={tw`text-white/40 text-[8px] font-semibold uppercase`}>Cashback</Text>
+                <Text style={tw`text-white/60 text-[10px] font-bold`}>₦340 earned</Text>
+              </View>
+            </View>
 
-            {/* Soft decorative visual assets inside balance card */}
-            <Text style={tw`absolute right-6 top-6 text-6xl opacity-20`}>💳</Text>
+            {/* Actions row */}
+            <View style={tw`flex-row gap-2 mt-3`}>
+              <TouchableOpacity
+                onPress={() => setCurrentView('add_money')}
+                style={tw`flex-1 bg-white rounded-lg py-2 items-center flex-row justify-center gap-1`}
+              >
+                <Plus size={12} color="#0A8A3A" />
+                <Text style={tw`text-market-green text-[11px] font-bold`}>Add Money</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={tw`border border-white/30 bg-white/10 rounded-lg px-3 py-2 items-center flex-row justify-center gap-1`}
+              >
+                <ArrowUpRight size={12} color="white" />
+                <Text style={tw`text-white text-[11px] font-bold`}>Send</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Decorative elements */}
+            <View style={tw`absolute -right-4 -top-4 w-20 h-20 rounded-full bg-white/5`} />
+            <View style={tw`absolute -right-2 -bottom-10 w-24 h-24 rounded-full bg-white/5`} />
           </View>
 
           {/* Quick Action Rows */}
@@ -208,16 +250,16 @@ export default function WalletScreen() {
                   style={tw`flex-row items-center justify-between p-3.5 border border-gray-100 rounded-2xl bg-white shadow-sm`}
                   onPress={() => handleTransactionPress(txn)}
                 >
-                  <View style={tw`flex-row items-center gap-3`}>
+                  <View style={tw`flex-row items-center gap-3 flex-1`}>
                     <View style={tw`w-10 h-10 rounded-full bg-gray-100 items-center justify-center`}>
                       {txn.negative ? <TrendingDown size={18} color="#EF4444" /> : <TrendingUp size={18} color="#0A8A3A" />}
                     </View>
-                    <View>
-                      <Text style={tw`text-sm font-bold text-gray-900`}>{txn.title}</Text>
-                      <Text style={tw`text-[10px] text-gray-400 font-semibold mt-0.5`}>{txn.desc}  •  {txn.date}</Text>
+                    <View style={tw`flex-1`}>
+                      <Text style={tw`text-sm font-bold text-gray-900`} numberOfLines={1}>{txn.title}</Text>
+                      <Text style={tw`text-[10px] text-gray-400 font-semibold mt-0.5`} numberOfLines={1}>{txn.desc}  •  {txn.date}</Text>
                     </View>
                   </View>
-                  <Text style={tw`text-sm font-bold ${txn.negative ? 'text-gray-900' : 'text-market-green'}`}>{txn.amount}</Text>
+                  <Text style={tw`text-sm font-bold ml-2 ${txn.negative ? 'text-gray-900' : 'text-market-green'}`}>{txn.amount}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -245,7 +287,7 @@ export default function WalletScreen() {
             <View style={tw`mx-4 mt-4 bg-market-green-light border border-market-green/20 rounded-2xl p-4 flex-row items-center justify-between`}>
               <View style={tw`flex-1 pr-2`}>
                 <Text style={tw`text-xs font-bold text-market-green`}>Filter Applied</Text>
-                <Text style={tw`text-[10px] text-gray-500 font-semibold mt-1`}>01 Apr 2024 - 12 May 2024  •  All Types  •  Amount: ₦0 - ₦100,000</Text>
+                <Text style={tw`text-[10px] text-gray-500 font-semibold mt-1`}>{fromDate} - {toDate}  •  {selectedTypes.length} types  •  ₦{minAmount} - ₦{maxAmount}</Text>
               </View>
               <TouchableOpacity onPress={() => setFilterApplied(false)}>
                 <Text style={tw`text-xs text-red-500 font-bold`}>Clear All</Text>
@@ -291,16 +333,16 @@ export default function WalletScreen() {
                   style={tw`flex-row items-center justify-between p-3.5 border border-gray-100 rounded-2xl bg-white shadow-sm`}
                   onPress={() => handleTransactionPress(txn)}
                 >
-                  <View style={tw`flex-row items-center gap-3`}>
+                  <View style={tw`flex-row items-center gap-3 flex-1`}>
                     <View style={tw`w-10 h-10 rounded-full bg-gray-100 items-center justify-center`}>
                       {txn.negative ? <TrendingDown size={18} color="#EF4444" /> : <TrendingUp size={18} color="#0A8A3A" />}
                     </View>
-                    <View>
-                      <Text style={tw`text-sm font-bold text-gray-900`}>{txn.title}</Text>
-                      <Text style={tw`text-[10px] text-gray-400 font-semibold mt-0.5`}>{txn.desc}  •  {txn.date}</Text>
+                    <View style={tw`flex-1`}>
+                      <Text style={tw`text-sm font-bold text-gray-900`} numberOfLines={1}>{txn.title}</Text>
+                      <Text style={tw`text-[10px] text-gray-400 font-semibold mt-0.5`} numberOfLines={1}>{txn.desc}  •  {txn.date}</Text>
                     </View>
                   </View>
-                  <Text style={tw`text-xs font-bold ${txn.negative ? 'text-gray-900' : 'text-market-green'}`}>{txn.amount}</Text>
+                  <Text style={tw`text-xs font-bold ml-2 ${txn.negative ? 'text-gray-900' : 'text-market-green'}`}>{txn.amount}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -313,8 +355,18 @@ export default function WalletScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-6 px-4 pt-4`}>
           <Text style={tw`text-sm font-bold text-gray-900 mb-2.5`}>Date Range</Text>
           <View style={tw`flex-row gap-2 mb-4`}>
-            {['Last 7 Days', 'Last 30 Days', 'Custom'].map((dr) => (
-              <TouchableOpacity key={dr} style={tw`flex-1 py-3 rounded-xl border border-gray-200 items-center bg-white`}><Text style={tw`text-xs font-bold text-gray-600`}>{dr}</Text></TouchableOpacity>
+            {[
+              { label: 'Last 7 Days', value: '7' as const },
+              { label: 'Last 30 Days', value: '30' as const },
+              { label: 'Custom', value: 'custom' as const },
+            ].map((dr) => (
+              <TouchableOpacity
+                key={dr.value}
+                onPress={() => setDateRange(dr.value)}
+                style={tw`flex-1 py-3 rounded-xl border items-center ${dateRange === dr.value ? 'bg-market-green border-market-green' : 'border-gray-200 bg-white'}`}
+              >
+                <Text style={tw`text-xs font-bold ${dateRange === dr.value ? 'text-white' : 'text-gray-600'}`}>{dr.label}</Text>
+              </TouchableOpacity>
             ))}
           </View>
 
@@ -332,19 +384,57 @@ export default function WalletScreen() {
 
           {/* Transaction checkboxes */}
           <Text style={tw`text-sm font-bold text-gray-900 mb-3`}>Transaction Type</Text>
-          {['Money In', 'Money Out', 'Payments', 'Offers', 'Refunds'].map((type) => (
-            <View key={type} style={tw`flex-row justify-between items-center py-3.5 border-b border-gray-50`}>
-              <Text style={tw`text-xs font-semibold text-gray-700`}>{type}</Text>
-              <View style={tw`w-5 h-5 rounded bg-market-green items-center justify-center`}><Text style={tw`text-white text-[10px] font-bold`}>✓</Text></View>
-            </View>
-          ))}
+          {['Money In', 'Money Out', 'Payments', 'Offers', 'Refunds'].map((type) => {
+            const isSelected = selectedTypes.includes(type);
+            const toggleType = () => {
+              setSelectedTypes(prev =>
+                isSelected ? prev.filter(t => t !== type) : [...prev, type]
+              );
+            };
+            return (
+              <TouchableOpacity
+                key={type}
+                onPress={toggleType}
+                style={tw`flex-row justify-between items-center py-3.5 border-b border-gray-50`}
+              >
+                <Text style={tw`text-xs font-semibold text-gray-700`}>{type}</Text>
+                <View style={tw`w-5 h-5 rounded items-center justify-center ${isSelected ? 'bg-market-green' : 'border border-gray-300'}`}>
+                  {isSelected && <Text style={tw`text-white text-[10px] font-bold`}>✓</Text>}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
 
           {/* Range Inputs */}
           <Text style={tw`text-sm font-bold text-gray-900 mt-5 mb-3`}>Amount Range (Optional)</Text>
           <View style={tw`flex-row gap-3 items-center mb-6`}>
-            <View style={tw`flex-1 gap-1`}><Text style={tw`text-[10px] text-gray-400 font-bold`}>Min Amount</Text><View style={tw`border border-gray-200 rounded-xl px-4 h-13 justify-center bg-gray-50/50`}><Text style={tw`text-sm text-gray-900 font-bold`}>₦ 0</Text></View></View>
+            <View style={tw`flex-1 gap-1`}>
+              <Text style={tw`text-[10px] text-gray-400 font-bold`}>Min Amount</Text>
+              <View style={tw`border border-gray-200 rounded-xl px-4 h-13 justify-center bg-white`}>
+                <TextInput
+                  style={tw`text-sm text-gray-900 font-bold`}
+                  value={minAmount}
+                  onChangeText={setMinAmount}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor="#A3A3A3"
+                />
+              </View>
+            </View>
             <Text style={tw`text-gray-400 font-bold mt-4`}>—</Text>
-            <View style={tw`flex-1 gap-1`}><Text style={tw`text-[10px] text-gray-400 font-bold`}>Max Amount</Text><View style={tw`border border-gray-200 rounded-xl px-4 h-13 justify-center bg-gray-50/50`}><Text style={tw`text-sm text-gray-900 font-bold`}>₦ 100,000</Text></View></View>
+            <View style={tw`flex-1 gap-1`}>
+              <Text style={tw`text-[10px] text-gray-400 font-bold`}>Max Amount</Text>
+              <View style={tw`border border-gray-200 rounded-xl px-4 h-13 justify-center bg-white`}>
+                <TextInput
+                  style={tw`text-sm text-gray-900 font-bold`}
+                  value={maxAmount}
+                  onChangeText={setMaxAmount}
+                  keyboardType="numeric"
+                  placeholder="100000"
+                  placeholderTextColor="#A3A3A3"
+                />
+              </View>
+            </View>
           </View>
 
           {/* Action triggers */}

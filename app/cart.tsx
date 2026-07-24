@@ -45,8 +45,9 @@ export default function CartScreen() {
                         <View style={tw`flex-row items-center gap-1 mt-0.5`}>
                             <Text style={tw`text-xs text-gray-400 font-medium`}>Delivering to</Text>
                             <MapPin size={12} color="#0A8A3A" />
-                            <Text style={tw`text-xs text-gray-700 font-semibold`}>23 Greenway Street, Lekki Phase 1, Lagos</Text>
                         </View>
+                        <Text style={tw`text-xs text-gray-700 font-semibold mt-0.5`}>23 Greenway Street,</Text>
+                        <Text style={tw`text-xs text-gray-700 font-semibold`}>Lekki Phase 1, Lagos</Text>
                     </View>
                 </View>
                 <TouchableOpacity>
@@ -56,15 +57,15 @@ export default function CartScreen() {
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* Savings Card */}
-                <View style={tw`mx-4 mt-2 bg-market-green-light rounded-2xl p-4 flex-row items-center justify-between mb-4`}>
-                    <View style={tw`flex-row items-center gap-2.5`}>
+                <View style={tw`mx-4 mt-2 bg-market-green-light rounded-2xl p-4 flex-row items-center justify-between border border-market-green/20 mb-4`}>
+                    <View style={tw`flex-row items-center gap-2.5 flex-1`}>
                         <ShieldCheck size={22} color="#0A8A3A" />
                         <Text style={tw`text-sm text-gray-700 font-medium`}>
                             Yay! You're saving <Text style={tw`font-bold text-market-green`}>₦1,450</Text> on this order
                         </Text>
                     </View>
-                    <TouchableOpacity style={tw`flex-row items-center`}>
-                        <Text style={tw`text-xs text-market-green font-bold`}>View details</Text>
+                    <TouchableOpacity style={tw`flex-row items-center ml-2`}>
+                        <Text style={tw`text-xs text-market-green font-bold`}>Details</Text>
                         <ChevronRight size={14} color="#0A8A3A" style={tw`ml-0.5`} />
                     </TouchableOpacity>
                 </View>
@@ -100,17 +101,15 @@ export default function CartScreen() {
                                             <Plus size={14} color="#0A8A3A" />
                                         </TouchableOpacity>
                                     </View>
-
-                                    <View style={tw`items-end gap-1 flex-row align-bottom`}>
-                                        <TouchableOpacity style={tw`mr-4 border border-gray-200 px-3 py-1.5 rounded-lg bg-white`}>
-                                            <Text style={tw`text-xs text-gray-500 font-semibold`}>Save for later</Text>
-                                        </TouchableOpacity>
-                                        <View style={tw`items-end`}>
-                                            <Text style={tw`text-sm font-bold text-gray-900`}>{item.price}</Text>
-                                            {item.oldPrice && <Text style={tw`text-[10px] text-gray-400 line-through`}>{item.oldPrice}</Text>}
-                                        </View>
+                                    <View style={tw`items-end`}>
+                                        <Text style={tw`text-sm font-bold text-gray-900`}>{item.price}</Text>
+                                        {item.oldPrice && <Text style={tw`text-[10px] text-gray-400 line-through`}>{item.oldPrice}</Text>}
                                     </View>
                                 </View>
+
+                                <TouchableOpacity style={tw`self-end mt-2 border border-gray-200 px-3 py-1.5 rounded-lg bg-white`}>
+                                    <Text style={tw`text-xs text-gray-500 font-semibold`}>Save for later</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     ))}
@@ -173,9 +172,9 @@ export default function CartScreen() {
 
             {/* Checkout CTA Bar */}
             <View style={tw`px-4 py-3 border-t border-gray-100 flex-row items-center gap-3 bg-white`}>
-                <View style={tw`flex-row items-center gap-2 bg-[#F2FBF6] px-3 py-3.5 rounded-xl border border-market-green/20`}>
-                    <Award size={18} color="#0A8A3A" />
-                    <Text style={tw`text-[10px] text-market-green font-bold`}>Safe & Secure</Text>
+                <View style={tw`flex-row items-center gap-1.5 bg-[#F2FBF6] px-2.5 py-3 rounded-xl border border-market-green/20`}>
+                    <Award size={16} color="#0A8A3A" />
+                    <Text style={tw`text-[9px] text-market-green font-bold`}>Safe &{'\n'}Secure</Text>
                 </View>
                 <TouchableOpacity
                     style={tw`flex-1 bg-market-green h-13 rounded-xl flex-row items-center justify-between px-5`}
@@ -185,7 +184,7 @@ export default function CartScreen() {
                         <Text style={tw`text-[9px] text-white/80 font-medium`}>View Details</Text>
                     </View>
                     <View style={tw`flex-row items-center gap-1`}>
-                        <Text style={tw`text-white text-sm font-bold`}>Proceed to Checkout</Text>
+                        <Text style={tw`text-white text-sm font-bold`}>Checkout</Text>
                         <ChevronRight size={16} color="white" />
                     </View>
                 </TouchableOpacity>

@@ -213,14 +213,14 @@ export default function OrdersScreen() {
             {/* 5-Star Feedback Row (delievered state) */}
             {trackingState === 'delivered' && (
               <View style={tw`mx-4 mt-4 bg-white rounded-2xl border border-gray-100 p-4 shadow-sm flex-row items-center justify-between`}>
-                <View style={tw`flex-row items-center gap-3`}>
+                <View style={tw`flex-row items-center gap-3 flex-1`}>
                   <Image source={require('@/assets/images/grocery-bag-small.png')} style={tw`w-10 h-10`} resizeMode="contain" />
-                  <View>
+                  <View style={tw`flex-1`}>
                     <Text style={tw`text-xs font-bold text-gray-950`}>How was your delivery experience?</Text>
                     <Text style={tw`text-[10px] text-gray-400 font-semibold mt-0.5`}>Your feedback helps us improve.</Text>
                   </View>
                 </View>
-                <View style={tw`flex-row gap-0.5`}>
+                <View style={tw`flex-row gap-0.5 ml-2`}>
                   {[1, 2, 3, 4, 5].map((s) => (
                     <TouchableOpacity key={s} onPress={() => setRating(s)}>
                       <Star size={16} color={s <= rating ? '#EAB308' : '#D4D4D4'} fill={s <= rating ? '#EAB308' : 'transparent'} />
@@ -261,13 +261,13 @@ export default function OrdersScreen() {
                 <TouchableOpacity onPress={() => setCurrentView('details')} style={tw`flex-row items-center gap-0.5`}><Text style={tw`text-xs text-gray-400 font-bold`}>4 items</Text><ChevronRight size={14} color="#737373" /></TouchableOpacity>
               </View>
               <View style={tw`flex-row items-center justify-between`}>
-                <View style={tw`flex-row items-center gap-2`}>
-                  <Image source={require('@/assets/images/prod-apple.png')} style={tw`w-10 h-10`} resizeMode="cover" />
-                  <Image source={require('@/assets/images/prod-banana.png')} style={tw`w-10 h-10`} resizeMode="cover" />
-                  <Image source={require('@/assets/images/prod-milk.png')} style={tw`w-10 h-10`} resizeMode="cover" />
+                <View style={tw`flex-row items-center gap-2 flex-1`}>
+                  <Image source={require('@/assets/images/prod-apple.png')} style={tw`w-10 h-10 rounded-lg`} resizeMode="cover" />
+                  <Image source={require('@/assets/images/prod-banana.png')} style={tw`w-10 h-10 rounded-lg`} resizeMode="cover" />
+                  <Image source={require('@/assets/images/prod-milk.png')} style={tw`w-10 h-10 rounded-lg`} resizeMode="cover" />
                   <Text style={tw`text-xs text-gray-400 font-bold ml-1`}>+1 more</Text>
                 </View>
-                <View style={tw`items-end`}>
+                <View style={tw`items-end ml-2`}>
                   <Text style={tw`text-sm font-bold text-gray-950`}>Total Paid: ₦8,950</Text>
                   <TouchableOpacity onPress={() => setCurrentView('details')} style={tw`flex-row items-center mt-1`}><Text style={tw`text-[10px] text-market-green font-bold`}>View Details</Text><ChevronRight size={12} color="#0A8A3A" style={tw`ml-0.5`} /></TouchableOpacity>
                 </View>
@@ -303,9 +303,9 @@ export default function OrdersScreen() {
             </View>
             <View style={tw`flex-row justify-between items-center pt-3`}>
               <View style={tw`flex-row items-center gap-1.5`}>
-                <Image source={require('@/assets/images/prod-apple.png')} style={tw`w-8 h-8`} />
-                <Image source={require('@/assets/images/prod-banana.png')} style={tw`w-8 h-8`} />
-                <Image source={require('@/assets/images/prod-milk.png')} style={tw`w-8 h-8`} />
+                <Image source={require('@/assets/images/prod-apple.png')} style={tw`w-8 h-8 rounded-lg`} />
+                <Image source={require('@/assets/images/prod-banana.png')} style={tw`w-8 h-8 rounded-lg`} />
+                <Image source={require('@/assets/images/prod-milk.png')} style={tw`w-8 h-8 rounded-lg`} />
               </View>
               <TouchableOpacity onPress={() => setCurrentView('reorder')} style={tw`border border-market-green px-4 py-2 rounded-xl`}><Text style={tw`text-xs text-market-green font-bold`}>Reorder Items</Text></TouchableOpacity>
             </View>
@@ -348,14 +348,14 @@ export default function OrdersScreen() {
             <Text style={tw`text-xs font-bold text-gray-900 mb-2`}>Items (4)</Text>
             {orderProducts.map((p) => (
               <View key={p.id} style={tw`flex-row justify-between items-center py-2.5 border-b border-gray-100 last:border-0`}>
-                <View style={tw`flex-row items-center gap-3`}>
+                <View style={tw`flex-row items-center gap-3 flex-1`}>
                   <Image source={p.image} style={tw`w-10 h-10 rounded-lg`} />
-                  <View>
+                  <View style={tw`flex-1`}>
                     <Text style={tw`text-xs font-bold text-gray-900`}>{p.name}</Text>
                     <Text style={tw`text-[10px] text-gray-400 mt-0.5`}>{p.qty}</Text>
                   </View>
                 </View>
-                <View style={tw`items-end`}>
+                <View style={tw`items-end ml-2`}>
                   <Text style={tw`text-xs text-gray-400 font-semibold`}>Qty: 1</Text>
                   <Text style={tw`text-xs font-bold text-gray-950 mt-1`}>{p.price}</Text>
                 </View>
@@ -393,7 +393,7 @@ export default function OrdersScreen() {
                   <Image source={item.image} style={tw`w-20 h-20 rounded-2xl`} resizeMode="cover" />
                   <View style={tw`flex-1 justify-between`}>
                     <View style={tw`flex-row justify-between items-start`}>
-                      <View>
+                      <View style={tw`flex-1 mr-2`}>
                         <Text style={tw`text-sm font-bold text-gray-900`}>{item.name}</Text>
                         <Text style={tw`text-xs text-gray-400 font-medium mt-0.5`}>{item.qty}</Text>
                         <View style={tw`bg-market-green-light self-start px-2 py-0.5 rounded mt-1 border border-market-green/20`}><Text style={tw`text-[10px] text-market-green font-bold`}>{item.tag}</Text></View>
@@ -401,7 +401,7 @@ export default function OrdersScreen() {
                       
                       <TouchableOpacity 
                         onPress={() => toggleReorderCheck(item.id)}
-                        style={tw`w-5 h-5 rounded border-2 items-center justify-center ${item.checked ? 'border-market-green bg-market-green' : 'border-gray-300'}`}
+                        style={tw`w-5 h-5 rounded border-2 items-center justify-center mt-1 ${item.checked ? 'border-market-green bg-market-green' : 'border-gray-300'}`}
                       >
                         {item.checked && <Check size={12} color="white" strokeWidth={4} />}
                       </TouchableOpacity>

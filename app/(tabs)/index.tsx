@@ -3,17 +3,13 @@ import { useRouter } from 'expo-router';
 import {
   Bell,
   ChevronDown,
-  Headphones,
   Heart,
   MapPin,
   Mic,
-  Percent,
   Plus,
   Scan,
   Search,
-  ShieldCheck,
-  ShoppingBag,
-  Truck
+  ShoppingBag
 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -95,15 +91,24 @@ export default function HomeScreen() {
         {/* Header Block */}
         <View style={tw`px-4 pt-2 pb-2`}>
           <View style={tw`flex-row items-center justify-between mb-2`}>
-            <TouchableOpacity style={tw`flex-row items-center gap-1.5`}>
-              <MapPin size={22} color="#0A8A3A" />
-              <View>
+            {/* 1. Wrap the left side in flex-1 to allow icons to stay on the right */}
+            <TouchableOpacity style={tw`flex-row items-start gap-1.5 flex-1`}>
+              {/* Changed items-center to items-start to align the pin with the top text */}
+              <MapPin size={22} color="#0A8A3A" style={tw`mt-1`} />
+
+              <View style={tw`flex-1`}>
+                {/* Line 1 */}
                 <Text style={tw`text-[11px] text-gray-500`}>Deliver to</Text>
+
+                {/* Line 2 - Street Name */}
+                <Text style={tw`text-base font-bold text-gray-950`}>23 Greenway Street,</Text>
+
+                {/* Line 3 - Area and Chevron */}
                 <View style={tw`flex-row items-center gap-1`}>
-                  <Text style={tw`text-sm font-semibold text-gray-900`}>
-                    23 Greenway Street, Lekki Phase 1, Lagos
+                  <Text style={tw`text-xs text-gray-500 font-medium`}>
+                    Lekki Phase 1, Lagos
                   </Text>
-                  <ChevronDown size={14} color="#0A8A3A" />
+                  <ChevronDown size={12} color="#0A8A3A" />
                 </View>
               </View>
             </TouchableOpacity>
@@ -135,7 +140,7 @@ export default function HomeScreen() {
             <Search size={20} color="#737373" style={tw`mr-3`} />
             <TextInput
               style={tw`flex-1 text-base text-gray-900`}
-              placeholder="Search for products, stores and categories"
+              placeholder="Search for products, stores "
               placeholderTextColor="#A3A3A3"
             />
             <Scan size={20} color="#0A8A3A" style={tw`mr-3`} />
@@ -157,7 +162,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <Image
-            source={require('@/assets/images/grocery-bag-hero.png')}
+            source={require('@/assets/images/bag-splash.png')}
             style={tw`w-36 h-32`}
             resizeMode="contain"
           />
