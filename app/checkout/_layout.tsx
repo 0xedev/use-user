@@ -4,6 +4,7 @@ export default function CheckoutLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="delivery" />
+      <Stack.Screen name="time" />
       <Stack.Screen name="payment" />
       <Stack.Screen name="review" />
       <Stack.Screen name="confirm" />

@@ -1,232 +1,321 @@
-import { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { 
-  ArrowLeft, 
-  ShieldCheck, 
-  MapPin, 
-  ChevronRight, 
-  MessageSquare, 
-  Box, 
-  ChevronRightSquare 
-} from 'lucide-react-native';
 import tw from '@/lib/tw';
+import { useRouter } from 'expo-router';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bell,
+  Info,
+  MapPin,
+  Plus,
+  Search,
+  ShieldCheck,
+  ShoppingBag,
+  Truck
+} from 'lucide-react-native';
+import { useState } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const steps = [
-  { id: 1, label: 'Delivery', active: true, completed: false },
-  { id: 2, label: 'Payment', active: false, completed: false },
-  { id: 3, label: 'Review', active: false, completed: false },
-  { id: 4, label: 'Confirm', active: false, completed: false },
+  { id: 1, label: 'Delivery', active: true, completed: true },
+  { id: 2, label: 'Time', active: false, completed: false },
+  { id: 3, label: 'Payment', active: false, completed: false },
+  { id: 4, label: 'Review', active: false, completed: false },
+  { id: 5, label: 'Confirm', active: false, completed: false },
+];
+
+const savedAddresses = [
+  {
+    id: 1,
+    label: 'Home',
+    isDefault: true,
+    address: '23 Adekunle Street, Yaba, Lagos',
+    landmark: 'Landmark: Near Yaba Bus Stop',
+    contact: 'John Doe • 0803 123 4567',
+  },
+  {
+    id: 2,
+    label: 'Work',
+    isDefault: false,
+    address: '45 Marina Street, Victoria Island, Lagos',
+    landmark: 'Landmark: Opp. Eko Hotel',
+    contact: 'John Doe • 0803 123 4567',
+  },
+];
+
+const orderItems = [
+  {
+    id: 1,
+    name: 'Stallion Premium Parboiled Rice',
+    unit: '50kg',
+    price: '₦68,500',
+    qty: 1,
+    total: '₦68,500',
+    image: require('@/assets/images/prod-rice.png'),
+  },
+  {
+    id: 2,
+    name: 'Golden Penny Cooking Oil',
+    unit: '5L',
+    price: '₦12,400',
+    qty: 2,
+    total: '₦24,800',
+    image: require('@/assets/images/prod-oil.png'),
+  },
+  {
+    id: 3,
+    name: 'Golden Penny Beans (Brown)',
+    unit: '1kg',
+    price: '₦2,300',
+    qty: 1,
+    total: '₦2,300',
+    image: require('@/assets/images/prod-tomatoes.png'),
+  },
 ];
 
 export default function CheckoutDeliveryScreen() {
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState('standard');
-  const [deliveryNote, setDeliveryNote] = useState('');
+  const [selectedAddressId, setSelectedAddressId] = useState(1);
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
-      {/* Header Layout */}
-      <View style={tw`px-4 py-3 flex-row items-center justify-between border-b border-gray-50`}>
+      {/* Top Navigation Bar */}
+      <View style={tw`px-4 pt-2 pb-1 flex-row items-center justify-between`}>
         <View style={tw`flex-row items-center gap-3`}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <ArrowLeft size={24} color="#171717" />
+          <TouchableOpacity onPress={() => router.back()} style={tw`w-9 h-9 items-center justify-center`}>
+            <ArrowLeft size={22} color="#171717" />
           </TouchableOpacity>
-          <View>
-            <Text style={tw`text-xl font-bold text-gray-900`}>Checkout</Text>
-            <Text style={tw`text-[10px] text-gray-400 font-semibold`}>Step 1 of 4</Text>
-          </View>
+          <Text style={tw`text-2xl font-bold text-black`}>
+            <Text style={tw`text-market-green`}>use</Text>Market
+          </Text>
         </View>
-        <View style={tw`flex-row items-center gap-1 bg-[#F2FBF6] px-2.5 py-1.5 rounded-lg`}>
-          <ShieldCheck size={14} color="#0A8A3A" />
-          <Text style={tw`text-[10px] text-market-green font-bold`}>100% Secure</Text>
+
+        <View style={tw`flex-row items-center gap-3`}>
+          <TouchableOpacity style={tw`w-9 h-9 items-center justify-center`}>
+            <Search size={22} color="#171717" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={tw`relative w-9 h-9 items-center justify-center`}>
+            <Bell size={22} color="#171717" />
+            <View style={tw`absolute top-1 right-1 w-2 h-2 bg-market-green rounded-full`} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={tw`relative w-9 h-9 items-center justify-center`} onPress={() => router.push('/cart')}>
+            <ShoppingBag size={22} color="#171717" />
+            <View style={tw`absolute -top-1 -right-1 w-4.5 h-4.5 bg-market-green rounded-full items-center justify-center border-2 border-white`}>
+              <Text style={tw`text-white text-[9px] font-bold`}>3</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Progress Stepper Bar */}
-      <View style={tw`px-4 py-3 flex-row items-center justify-between bg-gray-50/30`}>
-        {steps.map((step, i) => (
-          <View key={step.id} style={tw`flex-row items-center flex-1`}>
-            <View style={tw`items-center`}>
-              <View style={tw`w-8 h-8 rounded-full items-center justify-center ${step.active ? 'bg-market-green' : 'bg-gray-200'}`}>
-                <Text style={tw`text-xs font-bold ${step.active ? 'text-white' : 'text-gray-500'}`}>{step.id}</Text>
-              </View>
-              <Text style={tw`text-[9px] mt-1 font-semibold ${step.active ? 'text-market-green font-bold' : 'text-gray-400'}`}>{step.label}</Text>
-            </View>
-            {i < steps.length - 1 && <View style={tw`flex-1 h-px bg-gray-200 mx-2 mb-4`} />}
-          </View>
-        ))}
-      </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Progress Tracker Card */}
-        <View style={tw`mx-4 mt-4 bg-market-green-light rounded-2xl p-4 flex-row items-center justify-between`}>
-          <View style={tw`flex-1 pr-3`}>
-            <Text style={tw`text-xs font-bold text-market-green`}>Add items worth ₦2,800 more to get FREE delivery</Text>
-            <View style={tw`h-1.5 bg-gray-200 rounded-full mt-2.5 overflow-hidden`}>
-              <View style={tw`h-full bg-market-green rounded-full w-[72%]`} />
-            </View>
-            <View style={tw`flex-row justify-between mt-1.5`}>
-              <Text style={tw`text-[9px] text-gray-400 font-semibold`}>₦0</Text>
-              <Text style={tw`text-[9px] text-gray-400 font-semibold`}>₦10,000</Text>
-            </View>
-          </View>
-          <View style={tw`w-12 h-12 bg-white rounded-full items-center justify-center border border-market-green/20`}>
-            <Text style={tw`text-xl`}>🛵</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
+        {/* Checkout Title & Secure Badge */}
+        <View style={tw`px-4 my-2 flex-row items-center justify-between`}>
+          <Text style={tw`text-2xl font-bold text-gray-950`}>Checkout</Text>
+          <View style={tw`flex-row items-center gap-1.5 bg-[#F0FDF4] px-2.5 py-1 rounded-lg border border-market-green/10`}>
+            <ShieldCheck size={14} color="#0A8A3A" />
+            <Text style={tw`text-[11px] font-bold text-market-green`}>100% Secure Checkout</Text>
           </View>
         </View>
 
-        {/* Delivery Address Card */}
-        <View style={tw`mx-4 mt-4 bg-white rounded-2xl border border-gray-100 p-4 shadow-sm`}>
-          <Text style={tw`text-sm font-bold text-gray-900 mb-3`}>Delivery Address</Text>
-          <View style={tw`flex-row items-start gap-3`}>
-            <MapPin size={22} color="#0A8A3A" style={tw`mt-0.5`} />
-            <View style={tw`flex-1`}>
-              <Text style={tw`text-sm font-bold text-gray-900 leading-5`}>23 Greenway Street,{'\n'}Lekki Phase 1, Lagos</Text>
-              <View style={tw`flex-row items-center gap-2 mt-2.5`}>
-                <View style={tw`bg-market-green-light px-2 py-0.5 rounded border border-market-green/20`}>
-                  <Text style={tw`text-[10px] text-market-green font-bold`}>Home</Text>
-                </View>
-                <Text style={tw`text-xs text-market-green font-semibold`}>• Add delivery note</Text>
+        {/* 5-Step Progress Stepper */}
+        <View style={tw`px-4 my-3 flex-row items-center justify-between`}>
+          {steps.map((step, idx) => (
+            <View key={step.id} style={tw`flex-1 items-center relative`}>
+              {/* Connecting Line */}
+              {idx < steps.length - 1 && (
+                <View style={tw`absolute top-3.5 left-1/2 w-full h-0.5 bg-gray-200 -z-10`} />
+              )}
+
+              {/* Circle Indicator */}
+              <View
+                style={tw`w-7 h-7 rounded-full items-center justify-center ${step.active
+                    ? 'bg-market-green shadow-xs'
+                    : 'bg-white border-2 border-gray-300'
+                  }`}
+              >
+                <Text style={tw`text-xs font-bold ${step.active ? 'text-white' : 'text-gray-500'}`}>
+                  {step.id}
+                </Text>
+              </View>
+
+              <Text style={tw`text-[10px] font-bold mt-1 ${step.active ? 'text-market-green' : 'text-gray-400'}`}>
+                {step.label}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Delivery Address Section Card */}
+        <View style={tw`mx-4 my-2 bg-white rounded-3xl border border-gray-100 p-4 shadow-xs`}>
+          <View style={tw`flex-row items-center justify-between mb-3`}>
+            <View style={tw`flex-row items-center gap-2.5`}>
+              <View style={tw`w-10 h-10 rounded-2xl bg-emerald-50 items-center justify-center border border-emerald-100`}>
+                <MapPin size={20} color="#0A8A3A" />
+              </View>
+              <View>
+                <Text style={tw`text-sm font-bold text-gray-900`}>Delivery Address</Text>
+                <Text style={tw`text-[11px] text-gray-400 font-medium mt-0.5`}>
+                  Where should we deliver your order?
+                </Text>
               </View>
             </View>
-            <TouchableOpacity style={tw`flex-row items-center`}>
-              <Text style={tw`text-xs text-market-green font-bold`}>Change</Text>
-              <ChevronRight size={14} color="#0A8A3A" style={tw`ml-0.5`} />
+
+            <TouchableOpacity onPress={() => router.push('/(location)/add')}>
+              <Text style={tw`text-xs font-bold text-market-green`}>Add New</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Saved Address Selection List */}
+          <View style={tw`gap-3`}>
+            {savedAddresses.map((addr) => {
+              const isSelected = selectedAddressId === addr.id;
+
+              return (
+                <TouchableOpacity
+                  key={addr.id}
+                  onPress={() => setSelectedAddressId(addr.id)}
+                  style={tw`p-3.5 rounded-2xl border flex-row items-start justify-between ${isSelected
+                      ? 'border-market-green bg-[#F0FDF4]'
+                      : 'border-gray-200 bg-white'
+                    }`}
+                >
+                  <View style={tw`flex-row items-start gap-3 flex-1 pr-2`}>
+                    {/* Radio Circle */}
+                    <View style={tw`w-5 h-5 rounded-full border-2 items-center justify-center mt-0.5 ${isSelected ? 'border-market-green bg-market-green' : 'border-gray-300'
+                      }`}>
+                      {isSelected && <View style={tw`w-2 h-2 rounded-full bg-white`} />}
+                    </View>
+
+                    <View style={tw`flex-1`}>
+                      <View style={tw`flex-row items-center gap-2`}>
+                        <Text style={tw`text-sm font-bold text-gray-900`}>{addr.label}</Text>
+                        {addr.isDefault && (
+                          <View style={tw`bg-emerald-100 px-2 py-0.5 rounded-md`}>
+                            <Text style={tw`text-[9px] font-bold text-market-green`}>Default</Text>
+                          </View>
+                        )}
+                      </View>
+
+                      <Text style={tw`text-xs font-bold text-gray-800 mt-1 leading-4`}>
+                        {addr.address}
+                      </Text>
+                      <Text style={tw`text-[11px] text-gray-400 font-medium mt-0.5`}>
+                        {addr.landmark}
+                      </Text>
+                      <Text style={tw`text-[11px] text-gray-500 font-semibold mt-1`}>
+                        {addr.contact}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity onPress={() => router.push('/(location)/add')}>
+                    <Text style={tw`text-xs font-bold text-market-green`}>Edit</Text>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              );
+            })}
+
+            {/* Add New Address Button */}
+            <TouchableOpacity
+              style={tw`border border-dashed border-gray-300 py-3 rounded-2xl flex-row items-center justify-center gap-2 bg-gray-50/50 mt-1`}
+              onPress={() => router.push('/(location)/add')}
+            >
+              <Plus size={16} color="#0A8A3A" />
+              <Text style={tw`text-xs font-bold text-market-green`}>Add New Address</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Delivery Options Grid */}
-        <View style={tw`mx-4 mt-4`}>
-          <Text style={tw`text-sm font-bold text-gray-900 mb-3`}>Delivery Options</Text>
-          
-          {/* Standard Delivery */}
-          <TouchableOpacity
-            onPress={() => setSelectedOption('standard')}
-            style={tw`flex-row items-center gap-3.5 p-4 rounded-2xl border mb-3 bg-white ${selectedOption === 'standard' ? 'border-market-green bg-[#F2FBF6]' : 'border-gray-200'}`}
-          >
-            <View style={tw`w-5 h-5 rounded-full border-2 items-center justify-center ${selectedOption === 'standard' ? 'border-market-green' : 'border-gray-300'}`}>
-              {selectedOption === 'standard' && <View style={tw`w-2.5 h-2.5 rounded-full bg-market-green`} />}
-            </View>
-            <Text style={tw`text-2xl`}>🛵</Text>
-            <View style={tw`flex-1`}>
-              <View style={tw`flex-row items-center justify-between`}>
-                <Text style={tw`text-sm font-bold text-gray-900`}>Standard Delivery</Text>
-                <Text style={tw`text-sm font-bold text-gray-950`}>₦1,000</Text>
-              </View>
-              <Text style={tw`text-xs text-gray-500 mt-0.5 font-medium`}>20-30 mins</Text>
-              <Text style={tw`text-xs text-gray-400 mt-0.5 font-semibold`}>Get your order in 20-30 mins</Text>
-              <View style={tw`bg-market-green-light self-start px-2 py-0.5 rounded mt-2 border border-market-green/20`}>
-                <Text style={tw`text-[9px] text-market-green font-bold`}>Recommended</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          {/* Express Delivery */}
-          <TouchableOpacity
-            onPress={() => setSelectedOption('express')}
-            style={tw`flex-row items-center gap-3.5 p-4 rounded-2xl border mb-3 bg-white ${selectedOption === 'express' ? 'border-market-green bg-[#F2FBF6]' : 'border-gray-200'}`}
-          >
-            <View style={tw`w-5 h-5 rounded-full border-2 items-center justify-center ${selectedOption === 'express' ? 'border-market-green' : 'border-gray-300'}`}>
-              {selectedOption === 'express' && <View style={tw`w-2.5 h-2.5 rounded-full bg-market-green`} />}
-            </View>
-            <Text style={tw`text-2xl`}>🚀</Text>
-            <View style={tw`flex-1`}>
-              <View style={tw`flex-row items-center justify-between`}>
-                <Text style={tw`text-sm font-bold text-gray-900`}>Express Delivery</Text>
-                <Text style={tw`text-sm font-bold text-gray-950`}>₦1,800</Text>
-              </View>
-              <Text style={tw`text-xs text-gray-500 mt-0.5 font-medium`}>10-15 mins</Text>
-              <Text style={tw`text-xs text-gray-400 mt-0.5 font-semibold`}>Faster delivery in 10-15 mins</Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* Scheduled Delivery */}
-          <TouchableOpacity
-            onPress={() => setSelectedOption('schedule')}
-            style={tw`flex-row items-center gap-3.5 p-4 rounded-2xl border mb-4 bg-white ${selectedOption === 'schedule' ? 'border-market-green bg-[#F2FBF6]' : 'border-gray-200'}`}
-          >
-            <View style={tw`w-5 h-5 rounded-full border-2 items-center justify-center ${selectedOption === 'schedule' ? 'border-market-green' : 'border-gray-300'}`}>
-              {selectedOption === 'schedule' && <View style={tw`w-2.5 h-2.5 rounded-full bg-market-green`} />}
-            </View>
-            <Text style={tw`text-2xl`}>📅</Text>
-            <View style={tw`flex-1`}>
-              <View style={tw`flex-row items-center justify-between`}>
-                <Text style={tw`text-sm font-bold text-gray-900`}>Schedule Order</Text>
-                <ChevronRightSquare size={16} color="#737373" />
-              </View>
-              <Text style={tw`text-xs text-gray-500 mt-0.5 font-medium`}>Choose a convenient time</Text>
-              <Text style={tw`text-xs text-gray-400 mt-0.5 font-semibold`}>Schedule for later</Text>
-            </View>
+        {/* Delivery Location Confirmation Banner */}
+        <View style={tw`mx-4 my-2 bg-[#F0FDF4] rounded-2xl p-3.5 border border-market-green/20 flex-row items-center justify-between shadow-xs`}>
+          <View style={tw`flex-row items-center gap-3 flex-1 pr-2`}>
+            <Truck size={20} color="#0A8A3A" />
+            <Text style={tw`text-xs font-semibold text-gray-800`} numberOfLines={1}>
+              Deliver to <Text style={tw`font-bold text-gray-950`}>23 Adekunle Street, Yaba, Lagos</Text>
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => router.push('/(location)/index')}>
+            <Text style={tw`text-xs font-bold text-market-green`}>Change</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Optional Delivery Instructions */}
-        <View style={tw`mx-4 mt-2`}>
-          <Text style={tw`text-sm font-bold text-gray-900 mb-2`}>Delivery Instructions (Optional)</Text>
-          <View style={tw`flex-row items-center border border-gray-200 rounded-xl px-4 h-13 bg-white`}>
-            <MessageSquare size={18} color="#737373" style={tw`mr-3`} />
-            <TextInput
-              style={tw`flex-1 text-sm text-gray-900 h-full`}
-              placeholder="E.g. Please call when you arrive"
-              placeholderTextColor="#A3A3A3"
-              value={deliveryNote}
-              onChangeText={setDeliveryNote}
-              maxLength={100}
-            />
-            <Text style={tw`text-xs text-gray-400 font-medium`}>{deliveryNote.length}/100</Text>
+        {/* Order Items Preview Card */}
+        <View style={tw`mx-4 my-2 bg-white rounded-3xl border border-gray-100 p-4 shadow-xs`}>
+          <View style={tw`flex-row items-center justify-between mb-3`}>
+            <Text style={tw`text-sm font-bold text-gray-900`}>
+              Order Items <Text style={tw`text-xs font-semibold text-gray-400`}>({orderItems.length} items)</Text>
+            </Text>
+            <TouchableOpacity onPress={() => router.push('/cart')}>
+              <Text style={tw`text-xs font-bold text-market-green`}>Edit Cart</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={tw`gap-3`}>
+            {orderItems.map((item) => (
+              <View key={item.id} style={tw`flex-row items-center justify-between pb-2.5 border-b border-gray-50 last:border-0 last:pb-0`}>
+                <View style={tw`flex-row items-center gap-3 flex-1 pr-2`}>
+                  <Image source={item.image} style={tw`w-12 h-12 rounded-xl border border-gray-100 bg-gray-50/50`} resizeMode="contain" />
+                  <View style={tw`flex-1`}>
+                    <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>{item.name}</Text>
+                    <Text style={tw`text-[10px] text-gray-400 font-semibold mt-0.5`}>{item.unit}</Text>
+                    <Text style={tw`text-xs font-bold text-market-green mt-0.5`}>{item.price}</Text>
+                  </View>
+                </View>
+
+                <View style={tw`items-end`}>
+                  <Text style={tw`text-[11px] text-gray-400 font-semibold`}>Qty: {item.qty}</Text>
+                  <Text style={tw`text-xs font-extrabold text-gray-950 mt-0.5`}>{item.total}</Text>
+                </View>
+              </View>
+            ))}
           </View>
         </View>
 
-        {/* Careful Packing Block */}
-        <TouchableOpacity style={tw`mx-4 mt-4 flex-row items-center gap-3.5 bg-gray-50/50 rounded-2xl p-4 border border-gray-100 mb-4`}>
-          <Box size={24} color="#0A8A3A" />
-          <View style={tw`flex-1`}>
-            <Text style={tw`text-sm font-bold text-gray-900`}>Careful packing</Text>
-            <Text style={tw`text-xs text-gray-400 font-semibold mt-0.5`}>We pack your items with care to ensure quality</Text>
-          </View>
-          <ChevronRight size={18} color="#737373" />
-        </TouchableOpacity>
+        {/* Order Bill Summary Card */}
+        <View style={tw`mx-4 my-2 bg-white rounded-3xl border border-gray-100 p-4 shadow-xs gap-2.5`}>
+          <Text style={tw`text-sm font-bold text-gray-900 mb-1`}>Order Summary</Text>
 
-        {/* Bill Summary Table Card */}
-        <View style={tw`mx-4 bg-white rounded-2xl border border-gray-100 p-5 mb-6 shadow-sm`}>
-          <View style={tw`flex-row justify-between mb-2.5`}>
-            <Text style={tw`text-xs text-gray-500 font-medium`}>Item Total (4 items)</Text>
-            <Text style={tw`text-xs font-semibold text-gray-900`}>₦9,300</Text>
-          </View>
-          <View style={tw`flex-row justify-between mb-2.5`}>
-            <Text style={tw`text-xs text-gray-500 font-medium`}>Delivery Fee</Text>
-            <Text style={tw`text-xs font-semibold text-gray-900`}>₦1,000</Text>
-          </View>
-          <View style={tw`flex-row justify-between mb-2.5`}>
-            <Text style={tw`text-xs text-market-green font-semibold`}>Discount</Text>
-            <Text style={tw`text-xs text-market-green font-bold`}>-₦1,450</Text>
-          </View>
-          <View style={tw`h-px bg-gray-100 my-2`} />
           <View style={tw`flex-row justify-between items-center`}>
-            <View>
-              <Text style={tw`text-sm font-bold text-gray-950`}>To Pay</Text>
-              <View style={tw`flex-row items-center mt-1`}>
-                <Text style={tw`text-[10px] text-market-green font-bold`}>✓ You are saving ₦1,450</Text>
-              </View>
+            <Text style={tw`text-xs text-gray-500 font-medium`}>Subtotal (3 items)</Text>
+            <Text style={tw`text-xs font-bold text-gray-900`}>₦95,600</Text>
+          </View>
+
+          <View style={tw`flex-row justify-between items-center`}>
+            <View style={tw`flex-row items-center gap-1`}>
+              <Text style={tw`text-xs text-gray-500 font-medium`}>Delivery Fee</Text>
+              <Info size={12} color="#9CA3AF" />
             </View>
-            <Text style={tw`text-lg font-bold text-gray-950`}>₦8,850</Text>
+            <Text style={tw`text-xs font-bold text-gray-900`}>₦1,500</Text>
+          </View>
+
+          <View style={tw`flex-row justify-between items-center`}>
+            <View style={tw`flex-row items-center gap-1`}>
+              <Text style={tw`text-xs text-gray-500 font-medium`}>Service Fee</Text>
+              <Info size={12} color="#9CA3AF" />
+            </View>
+            <Text style={tw`text-xs font-bold text-gray-900`}>₦500</Text>
+          </View>
+
+          <View style={tw`h-px bg-gray-100 w-full my-1`} />
+
+          <View style={tw`flex-row justify-between items-center`}>
+            <Text style={tw`text-base font-extrabold text-gray-950`}>Total</Text>
+            <Text style={tw`text-xl font-extrabold text-market-green`}>₦97,600</Text>
           </View>
         </View>
-      </ScrollView>
 
-      {/* Continue Action Button */}
-      <TouchableOpacity 
-        style={tw`mx-4 mb-4 bg-market-green h-14 rounded-xl flex-row items-center justify-between px-5`}
-        onPress={() => router.push('/checkout/payment')}>
-        <Text style={tw`text-white text-base font-bold`}>Continue to Payment</Text>
-        <View style={tw`flex-row items-center gap-1`}>
-          <Text style={tw`text-white text-base font-bold`}>₦8,850</Text>
-          <ChevronRight size={18} color="white" />
-        </View>
-      </TouchableOpacity>
+        {/* Continue CTA Button */}
+        <TouchableOpacity
+          style={tw`mx-4 mt-3 bg-market-green py-4 rounded-2xl flex-row items-center justify-center gap-2 shadow-sm`}
+          onPress={() => router.push('/checkout/payment')}
+          activeOpacity={0.85}
+        >
+          <Text style={tw`text-white text-sm font-bold`}>Continue to Delivery Time</Text>
+          <ArrowRight size={18} color="white" />
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }

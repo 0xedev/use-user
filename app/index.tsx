@@ -20,11 +20,11 @@ export default function SplashScreen() {
         ).start();
     }, []);
 
-    // Automatic navigation timer (adjusted to 400 seconds based on your modification)
+    // Automatic navigation timer - Redirects to Services Hub (hub.tsx) after 4 seconds
     useEffect(() => {
         const timer = setTimeout(() => {
-            router.replace('/(auth)/welcome');
-        }, 4000); 
+            router.replace('/(auth)/hub');
+        }, 4000);
         return () => clearTimeout(timer);
     }, []);
 
@@ -49,23 +49,21 @@ export default function SplashScreen() {
                 </Text>
             </View>
 
-<View style={tw`w-full flex-1 justify-center items-center max-h-[90%] relative`}>
-    {/* Background Illustration */}
-    <Image
-        source={require('@/assets/images/splash-illustration.png')}
-        style={tw`w-full h-full`}
-        
-    />
-    
-    {/* Styled wrapping View with absolute positioning */}
-    <View style={tw`absolute w-80 h-60 justify-center mt-24 mr-5 items-center`}>
-        <Image
-            source={require('@/assets/images/bag-splash.png')}
-            style={tw`w-full h-full`}
-            
-        />
-    </View>
-</View>
+            <View style={tw`w-full flex-1 justify-center items-center max-h-[90%] relative`}>
+                {/* Background Illustration */}
+                <Image
+                    source={require('@/assets/images/splash-illustration.png')}
+                    style={tw`w-full h-full`}
+                />
+
+                {/* Styled wrapping View with absolute positioning */}
+                <View style={tw`absolute w-80 h-60 justify-center mt-24 mr-5 items-center`}>
+                    <Image
+                        source={require('@/assets/images/bag-splash.png')}
+                        style={tw`w-full h-full`}
+                    />
+                </View>
+            </View>
 
             {/* Custom Loader Group */}
             <View style={tw`flex-row items-center gap-3 mb-6`}>

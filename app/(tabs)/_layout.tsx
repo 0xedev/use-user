@@ -84,6 +84,11 @@ export default function TabLayout() {
       <Tabs.Screen name="category-detail" options={{ href: null }} />
       <Tabs.Screen name="two" options={{ href: null }} />
       <Tabs.Screen name="category/[id]" options={{ href: null }} />
+      <Tabs.Screen name="food-home" options={{ href: null }} />
+      <Tabs.Screen name="gadgets-home" options={{ href: null }} />
+      <Tabs.Screen name="marketplace-home" options={{ href: null }} />
+      <Tabs.Screen name="logistics-home" options={{ href: null }} />
+      <Tabs.Screen name="bills-home" options={{ href: null }} />
     </Tabs>
   );
 }

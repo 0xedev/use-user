@@ -1,324 +1,358 @@
 import tw from '@/lib/tw';
 import { useRouter } from 'expo-router';
 import {
+  ArrowRight,
   Bell,
   ChevronDown,
+  ChevronRight,
   Heart,
   MapPin,
-  Mic,
-  Plus,
   Scan,
   Search,
-  ShoppingBag
+  ShoppingBag,
+  ShoppingCart
 } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const categories = [
-  { id: 1, name: 'Market', image: require('@/assets/images/prod-apple.png'), bgColor: 'bg-green-50' },
-  { id: 2, name: 'Food', image: require('@/assets/images/prod-banana.png'), bgColor: 'bg-yellow-50' },
-  { id: 3, name: 'Pharmacy', image: require('@/assets/images/store-medplus.png'), bgColor: 'bg-blue-50' },
-  { id: 4, name: 'Meat & Fish', image: require('@/assets/images/prod-rice.png'), bgColor: 'bg-red-50' },
-  { id: 5, name: 'Beverages', image: require('@/assets/images/prod-orange.png'), bgColor: 'bg-indigo-50' },
-  { id: 6, name: 'Frozen', image: require('@/assets/images/prod-grapes.png'), bgColor: 'bg-cyan-50' },
-  { id: 7, name: 'Beauty', image: require('@/assets/images/grocery-bag-small.png'), bgColor: 'bg-pink-50' },
+  { id: 1, name: 'Groceries', icon: '🛒', bg: 'bg-emerald-50' },
+  { id: 2, name: 'Fruits &\nVegetables', icon: '🥗', bg: 'bg-emerald-50' },
+  { id: 3, name: 'Meat &\nSeafood', icon: '🥩', bg: 'bg-emerald-50' },
+  { id: 4, name: 'Drinks &\nSnacks', icon: '🧃', bg: 'bg-emerald-50' },
+  { id: 5, name: 'Baby &\nKids', icon: '🍼', bg: 'bg-emerald-50' },
+  { id: 6, name: 'All\nCategories', icon: '🎛️', bg: 'bg-gray-100' },
 ];
 
-const stores = [
-  { id: 1, name: 'Shoprite', rating: '4.8', reviews: '12k+', time: '20-30 min', min: '₦1,000 min', delivery: '• Free delivery', logo: require('@/assets/images/store-shoprite.png'), verified: true },
-  { id: 2, name: 'FreshMart', rating: '4.7', reviews: '8k+', time: '15-25 min', min: '₦800 min', delivery: '• Free delivery', logo: require('@/assets/images/store-freshmart.png'), verified: true },
-  { id: 3, name: 'MedPlus', rating: '4.9', reviews: '6k+', time: '25-35 min', min: '₦1,000 min', delivery: '• ₦200 delivery', logo: require('@/assets/images/store-medplus.png'), verified: true },
-  { id: 4, name: 'Justrite', rating: '4.6', reviews: '5k+', time: '30-40 min', min: '₦1,000 min', delivery: '• Free delivery', logo: require('@/assets/images/store-justrite.png'), verified: true },
+const bestDeals = [
+  {
+    id: 1,
+    name: 'Golden Penny Semovita',
+    unit: '2kg',
+    price: '₦2,400',
+    oldPrice: '₦3,000',
+    discount: '-20%',
+    image: require('@/assets/images/prod-rice.png'),
+  },
+  {
+    id: 2,
+    name: 'Indomie Instant Noodles',
+    unit: 'Pack (70g x 5)',
+    price: '₦1,700',
+    oldPrice: '₦2,000',
+    discount: '-15%',
+    image: require('@/assets/images/prod-indomie.png'),
+  },
+  {
+    id: 3,
+    name: 'Power Oil',
+    unit: '1L',
+    price: '₦1,800',
+    oldPrice: '₦2,000',
+    discount: '-10%',
+    image: require('@/assets/images/prod-oil.png'),
+  },
+  {
+    id: 4,
+    name: 'Milo Chocolate Drink',
+    unit: '400g',
+    price: '₦3,200',
+    oldPrice: '₦3,900',
+    discount: '-18%',
+    image: require('@/assets/images/prod-milo.png'),
+  },
 ];
 
-const topPicks = [
-  { id: 1, name: 'Cavendish Banana', qty: '1 bunch', price: '₦650', image: require('@/assets/images/prod-banana.png') },
-  { id: 2, name: 'Full Cream Milk', qty: '1L', price: '₦1,250', image: require('@/assets/images/prod-milk.png') },
-  { id: 3, name: 'Parboiled Rice', qty: '5kg', price: '₦6,200', image: require('@/assets/images/prod-rice.png') },
-  { id: 4, name: 'Power Oil', qty: '1L', price: '₦1,600', image: require('@/assets/images/prod-oil.png') },
-  { id: 5, name: 'Indomie Chicken', qty: '70g', price: '₦250', image: require('@/assets/images/prod-indomie.png') },
+const popularStores = [
+  {
+    id: 1,
+    name: 'QuickMart',
+    time: '15-30 min',
+    rating: '4.6',
+    minOrder: '₦1,000 min',
+    verified: true,
+    logo: require('@/assets/images/store-freshmart.png'),
+  },
+  {
+    id: 2,
+    name: 'SPAR Yaba',
+    time: '20-35 min',
+    rating: '4.5',
+    minOrder: '₦1,500 min',
+    verified: true,
+    logo: require('@/assets/images/store-shoprite.png'),
+  },
+  {
+    id: 3,
+    name: 'Prince Ebeano',
+    time: '25-40 min',
+    rating: '4.4',
+    minOrder: '₦1,000 min',
+    verified: true,
+    logo: require('@/assets/images/store-justrite.png'),
+  },
 ];
-
-const flashDeals = [
-  { id: 1, name: 'Fresh Tomatoes', qty: '1kg', price: '₦800', oldPrice: '₦1,000', discount: '20% OFF', image: require('@/assets/images/prod-tomatoes.png') },
-  { id: 2, name: 'Avocado', qty: '1kg', price: '₦2,125', oldPrice: '₦2,500', discount: '15% OFF', image: require('@/assets/images/prod-avocado.png') },
-  { id: 3, name: 'Big Eggs', qty: '1 tray', price: '₦1,350', oldPrice: '₦1,500', discount: '10% OFF', image: require('@/assets/images/prod-eggs.png') },
-  { id: 4, name: 'Golden Penny Oil', qty: '1L', price: '₦1,650', oldPrice: '₦2,200', discount: '25% OFF', image: require('@/assets/images/prod-oil.png') },
-];
-
-const buyAgain = [
-  { id: 1, name: 'Cornflakes', qty: '500g', price: '₦2,000', image: require('@/assets/images/prod-cornflakes.png') },
-  { id: 2, name: 'Indomie Chicken', qty: '70g', price: '₦250', image: require('@/assets/images/prod-indomie.png') },
-  { id: 3, name: 'Peak Milk', qty: '170g', price: '₦450', image: require('@/assets/images/prod-peak.png') },
-  { id: 4, name: 'Milo', qty: '400g', price: '₦2,400', image: require('@/assets/images/prod-milo.png') },
-  { id: 5, name: 'Water Aquafina', qty: '75cl', price: '₦300', image: require('@/assets/images/prod-water.png') },
-];
-
-function CountdownTimer() {
-  const [time, setTime] = useState({ h: 2, m: 45, s: 30 });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(prev => {
-        let { h, m, s } = prev;
-        s--;
-        if (s < 0) { s = 59; m--; }
-        if (m < 0) { m = 59; h--; }
-        if (h < 0) { h = 2; m = 45; s = 30; }
-        return { h, m, s };
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const pad = (n: number) => n.toString().padStart(2, '0');
-
-  return (
-    <Text style={tw`text-red-500 text-xs font-semibold ml-2`}>
-      Ends in {pad(time.h)} : {pad(time.m)} : {pad(time.s)}
-    </Text>
-  );
-}
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [wishlist, setWishlist] = useState<number[]>([]);
+
+  const toggleWishlist = (id: number) => {
+    setWishlist(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-
-        {/* Header Block */}
-        <View style={tw`px-4 pt-2 pb-2`}>
-          <View style={tw`flex-row items-center justify-between mb-2`}>
-            {/* 1. Wrap the left side in flex-1 to allow icons to stay on the right */}
-            <TouchableOpacity style={tw`flex-row items-start gap-1.5 flex-1`}>
-              {/* Changed items-center to items-start to align the pin with the top text */}
-              <MapPin size={22} color="#0A8A3A" style={tw`mt-1`} />
-
-              <View style={tw`flex-1`}>
-                {/* Line 1 */}
-                <Text style={tw`text-[11px] text-gray-500`}>Deliver to</Text>
-
-                {/* Line 2 - Street Name */}
-                <Text style={tw`text-base font-bold text-gray-950`}>23 Greenway Street,</Text>
-
-                {/* Line 3 - Area and Chevron */}
-                <View style={tw`flex-row items-center gap-1`}>
-                  <Text style={tw`text-xs text-gray-500 font-medium`}>
-                    Lekki Phase 1, Lagos
-                  </Text>
-                  <ChevronDown size={12} color="#0A8A3A" />
-                </View>
-              </View>
-            </TouchableOpacity>
-
-            <View style={tw`flex-row gap-3`}>
-              {/* Notification Bell */}
-              <TouchableOpacity style={tw`relative w-10 h-10 items-center justify-center bg-gray-50 rounded-full`}>
-                <Bell size={20} color="#0A8A3A" />
-                <View style={tw`absolute top-1.5 right-1.5 w-4 h-4 bg-[#0A8A3A] rounded-full items-center justify-center border border-white`}>
-                  <Text style={tw`text-white text-[9px] font-bold`}>3</Text>
-                </View>
-              </TouchableOpacity>
-
-              {/* Shopping Cart */}
-              <TouchableOpacity
-                style={tw`relative w-10 h-10 items-center justify-center bg-gray-50 rounded-full`}
-                onPress={() => router.push('/cart')}
-              >
-                <ShoppingBag size={20} color="#0A8A3A" />
-                <View style={tw`absolute top-1.5 right-1.5 w-4 h-4 bg-[#0A8A3A] rounded-full items-center justify-center border border-white`}>
-                  <Text style={tw`text-white text-[9px] font-bold`}>4</Text>
-                </View>
-              </TouchableOpacity>
+      {/* Top Navigation Bar */}
+      <View style={tw`px-4 pt-2 pb-2 flex-row items-center justify-between`}>
+        {/* Location Delivery Selector */}
+        <TouchableOpacity
+          style={tw`flex-row items-center gap-1.5 flex-1 pr-2`}
+          onPress={() => router.push('/(location)/index')}
+        >
+          <MapPin size={22} color="#0A8A3A" />
+          <View style={tw`flex-1`}>
+            <Text style={tw`text-[11px] text-gray-500 font-medium`}>Deliver to</Text>
+            <View style={tw`flex-row items-center gap-1`}>
+              <Text style={tw`text-sm font-bold text-gray-900`} numberOfLines={1}>
+                23 Adekunle Street, Yaba, Lagos
+              </Text>
+              <ChevronDown size={14} color="#171717" />
             </View>
           </View>
+        </TouchableOpacity>
 
-          {/* Search Box */}
-          <View style={tw`flex-row items-center border border-gray-200 rounded-xl px-4 h-13 bg-white`}>
-            <Search size={20} color="#737373" style={tw`mr-3`} />
-            <TextInput
-              style={tw`flex-1 text-base text-gray-900`}
-              placeholder="Search for products, stores "
-              placeholderTextColor="#A3A3A3"
-            />
-            <Scan size={20} color="#0A8A3A" style={tw`mr-3`} />
-            <Mic size={20} color="#0A8A3A" />
-          </View>
-        </View>
+        {/* Header Action Icons */}
+        <View style={tw`flex-row items-center gap-3`}>
+          <TouchableOpacity style={tw`w-9 h-9 items-center justify-center`}>
+            <Search size={22} color="#171717" />
+          </TouchableOpacity>
 
-        {/* Hero Scooter Banner */}
-        <View style={tw`mx-4 bg-market-green-light rounded-3xl p-5 mb-4 flex-row items-center justify-between relative overflow-hidden`}>
-          <View style={tw`w-3/5 z-10`}>
-            <Text style={tw`text-gray-950 text-xl font-bold leading-6`}>
-              Groceries delivered{'\n'}in <Text style={tw`text-market-green`}>30 minutes 🛵</Text>
-            </Text>
-            <Text style={tw`text-gray-500 text-xs mt-2 leading-4`}>
-              Fresh food, everyday essentials delivered to your doorstep.
-            </Text>
-            <TouchableOpacity style={tw`bg-market-green rounded-xl px-5 py-2.5 mt-4 self-start`}>
-              <Text style={tw`text-white text-xs font-semibold`}>Shop Now</Text>
-            </TouchableOpacity>
-          </View>
-          <Image
-            source={require('@/assets/images/bag-splash.png')}
-            style={tw`w-36 h-32`}
-            resizeMode="contain"
-          />
-        </View>
+          {/* Notification Bell */}
+          <TouchableOpacity style={tw`relative w-9 h-9 items-center justify-center`}>
+            <Bell size={22} color="#171717" />
+            <View style={tw`absolute top-1 right-1 w-2 h-2 bg-market-green rounded-full`} />
+          </TouchableOpacity>
 
-        {/* Pagination Dots */}
-        <View style={tw`flex-row justify-center gap-1.5 mb-4`}>
-          <View style={tw`w-6 h-1.5 rounded-full bg-market-green`} />
-          <View style={tw`w-1.5 h-1.5 rounded-full bg-gray-300`} />
-          <View style={tw`w-1.5 h-1.5 rounded-full bg-gray-300`} />
-          <View style={tw`w-1.5 h-1.5 rounded-full bg-gray-300`} />
-        </View>
-
-        {/* Shop by Category Section */}
-        <View style={tw`flex-row justify-between items-center px-4 mb-3`}>
-          <Text style={tw`text-lg font-bold text-gray-900`}>Shop by Category</Text>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/categories')}>
-            <Text style={tw`text-sm text-market-green font-semibold`}>See all</Text>
+          {/* Shopping Cart */}
+          <TouchableOpacity
+            style={tw`relative w-9 h-9 items-center justify-center`}
+            onPress={() => router.push('/cart')}
+          >
+            <ShoppingBag size={22} color="#171717" />
+            <View style={tw`absolute -top-1 -right-1 w-4.5 h-4.5 bg-market-green rounded-full items-center justify-center border-2 border-white`}>
+              <Text style={tw`text-white text-[9px] font-bold`}>2</Text>
+            </View>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-4 pb-1`}>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
+        {/* Search Bar Input */}
+        <View style={tw`px-4 my-2`}>
+          <View style={tw`flex-row items-center border border-gray-200 rounded-2xl px-4 h-13 bg-white shadow-xs`}>
+            <Search size={18} color="#9CA3AF" style={tw`mr-3`} />
+            <TextInput
+              style={tw`flex-1 text-sm text-gray-900 h-full font-medium`}
+              placeholder="Search for products, stores and more..."
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            <Scan size={18} color="#9CA3AF" />
+          </View>
+        </View>
+
+        {/* Hero Promotion Banner */}
+        <View style={tw`mx-4 my-2 bg-[#F0FDF4] rounded-3xl p-5 relative overflow-hidden flex-row items-center justify-between border border-market-green/10`}>
+          <View style={tw`w-3/5 z-10 pr-2`}>
+            <Text style={tw`text-2xl font-extrabold text-gray-900 leading-7`}>
+              Fresh groceries{'\n'}
+              <Text style={tw`text-market-green`}>delivered fast</Text>
+            </Text>
+            <Text style={tw`text-xs text-gray-500 font-medium mt-2 leading-4`}>
+              Get everything you need at your doorstep.
+            </Text>
+
+            {/* CTA Button */}
+            <TouchableOpacity
+              style={tw`bg-market-green px-4 py-2.5 rounded-xl flex-row items-center gap-1.5 self-start mt-4 shadow-sm`}
+              onPress={() => router.push('/(tabs)/categories')}
+            >
+              <Text style={tw`text-white text-xs font-bold`}>Shop Now</Text>
+              <ArrowRight size={14} color="white" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Banner Hero Image & Offer Badge */}
+          <View style={tw`w-2/5 items-center justify-center relative`}>
+            <Image
+              source={require('@/assets/images/grocery-bag-hero.png')}
+              style={tw`w-32 h-32`}
+              resizeMode="contain"
+            />
+            {/* 30% OFF Badge */}
+            <View style={tw`absolute -bottom-1 -right-1 bg-[#FACC15] w-14 h-14 rounded-full items-center justify-center border-2 border-white shadow-md`}>
+              <Text style={tw`text-[8px] font-bold text-gray-900 text-center uppercase`}>Up to</Text>
+              <Text style={tw`text-xs font-extrabold text-gray-950`}>30%</Text>
+              <Text style={tw`text-[8px] font-bold text-gray-900 uppercase`}>OFF</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Carousel Pagination Dots */}
+        <View style={tw`flex-row justify-center gap-1.5 my-2`}>
+          <View style={tw`w-6 h-1 bg-market-green rounded-full`} />
+          <View style={tw`w-2 h-1 bg-gray-200 rounded-full`} />
+          <View style={tw`w-2 h-1 bg-gray-200 rounded-full`} />
+          <View style={tw`w-2 h-1 bg-gray-200 rounded-full`} />
+        </View>
+
+        {/* Category Selector Grid */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3.5 my-3`}>
           {categories.map((cat) => (
-            <TouchableOpacity key={cat.id} style={tw`items-center gap-2`}>
-              <View style={tw`w-18 h-18 rounded-full ${cat.bgColor} items-center justify-center border border-gray-50 shadow-sm`}>
-                <Image source={cat.image} style={tw`w-10 h-10`} resizeMode="contain" />
+            <TouchableOpacity
+              key={cat.id}
+              style={tw`items-center gap-1.5 w-18`}
+              onPress={() => router.push('/(tabs)/categories')}
+            >
+              <View style={tw`w-16 h-16 rounded-2xl ${cat.bg} items-center justify-center border border-emerald-100/50 shadow-xs`}>
+                <Text style={tw`text-2xl`}>{cat.icon}</Text>
               </View>
-              <Text style={tw`text-[11px] text-gray-900 font-semibold text-center leading-3.5 w-18`}>
+              <Text style={tw`text-[11px] font-semibold text-gray-800 text-center leading-3.5`}>
                 {cat.name}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        {/* Popular Stores Section */}
-        <View style={tw`flex-row justify-between items-center px-4 mt-6 mb-3`}>
-          <Text style={tw`text-lg font-bold text-gray-900`}>Popular Stores</Text>
-          <TouchableOpacity>
-            <Text style={tw`text-sm text-market-green font-semibold`}>See all</Text>
+        {/* Delivery Fee Savings Tracker Banner */}
+        <View style={tw`mx-4 my-3 bg-[#F0FDF4] rounded-2xl p-4 border border-market-green/10 flex-row items-center justify-between`}>
+          <View style={tw`flex-row items-center gap-3.5 flex-1 pr-2`}>
+            <View style={tw`w-12 h-12 rounded-full bg-white items-center justify-center border border-emerald-100 shadow-xs`}>
+              <Text style={tw`text-2xl`}>🛵</Text>
+            </View>
+            <View style={tw`flex-1`}>
+              <Text style={tw`text-sm font-bold text-gray-900`}>Lower delivery fee!</Text>
+              <Text style={tw`text-[11px] text-gray-500 font-medium mt-0.5`}>
+                Add ₦5,000 more to enjoy reduced delivery fee.
+              </Text>
+              {/* Progress bar track */}
+              <View style={tw`w-full h-1.5 bg-gray-200 rounded-full mt-2 overflow-hidden`}>
+                <View style={tw`w-[56%] h-full bg-market-green rounded-full`} />
+              </View>
+              <View style={tw`flex-row justify-between mt-1`}>
+                <Text style={tw`text-[9px] text-market-green font-bold`}>₦2,800</Text>
+                <Text style={tw`text-[9px] text-gray-400 font-semibold`}>₦5,000</Text>
+              </View>
+            </View>
+          </View>
+          <ChevronRight size={18} color="#0A8A3A" />
+        </View>
+
+        {/* Best Deals For You Section */}
+        <View style={tw`flex-row justify-between items-center px-4 mt-4 mb-3`}>
+          <Text style={tw`text-lg font-bold text-gray-900`}>Best deals for you</Text>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/categories')}>
+            <Text style={tw`text-xs font-bold text-market-green`}>See all</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3.5 pb-1`}>
-          {stores.map((store) => (
-            <View key={store.id} style={tw`w-52 bg-white rounded-2xl border border-gray-100 p-4 shadow-sm`}>
-              <View style={tw`flex-row items-center gap-3 mb-3`}>
-                <Image source={store.logo} style={tw`w-10 h-10 rounded-xl`} resizeMode="cover" />
-                <View>
-                  <View style={tw`flex-row items-center gap-1`}>
-                    <Text style={tw`text-sm font-bold text-gray-900`}>{store.name}</Text>
-                    {store.verified && <Text style={tw`text-market-green text-xs`}>✓</Text>}
+
+        {/* Product Horizontal Scroll List */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3.5 pb-2`}>
+          {bestDeals.map((item) => {
+            const isLiked = wishlist.includes(item.id);
+
+            return (
+              <View key={item.id} style={tw`w-40 bg-white rounded-2xl border border-gray-100 p-3 shadow-xs relative`}>
+                {/* Discount Pill Badge */}
+                <View style={tw`absolute top-3 left-3 bg-emerald-100 px-2 py-0.5 rounded-md z-10`}>
+                  <Text style={tw`text-[10px] font-bold text-market-green`}>{item.discount}</Text>
+                </View>
+
+                {/* Like Heart Button */}
+                <TouchableOpacity
+                  style={tw`absolute top-3 right-3 z-10`}
+                  onPress={() => toggleWishlist(item.id)}
+                >
+                  <Heart
+                    size={18}
+                    color={isLiked ? '#EF4444' : '#9CA3AF'}
+                    fill={isLiked ? '#EF4444' : 'transparent'}
+                  />
+                </TouchableOpacity>
+
+                {/* Image Preview */}
+                <TouchableOpacity
+                  style={tw`items-center justify-center my-2 h-28 bg-gray-50/50 rounded-xl p-2`}
+                  onPress={() => router.push(`/product/${item.id}`)}
+                >
+                  <Image source={item.image} style={tw`w-20 h-20`} resizeMode="contain" />
+                </TouchableOpacity>
+
+                {/* Product Info */}
+                <Text style={tw`text-xs font-bold text-gray-900 leading-4 mt-1`} numberOfLines={2}>
+                  {item.name}
+                </Text>
+                <Text style={tw`text-[10px] text-gray-400 font-semibold mt-0.5`}>{item.unit}</Text>
+
+                {/* Pricing & Add Button */}
+                <View style={tw`flex-row items-end justify-between mt-2`}>
+                  <View>
+                    <Text style={tw`text-sm font-extrabold text-gray-900`}>{item.price}</Text>
+                    <Text style={tw`text-[10px] text-gray-400 line-through`}>{item.oldPrice}</Text>
                   </View>
-                  <View style={tw`flex-row items-center gap-1 mt-0.5`}>
-                    <Text style={tw`text-yellow-500 text-xs`}>⭐</Text>
-                    <Text style={tw`text-xs text-gray-700 font-semibold`}>{store.rating}</Text>
-                    <Text style={tw`text-xs text-gray-400`}>({store.reviews})</Text>
-                  </View>
+                  <TouchableOpacity style={tw`w-8 h-8 rounded-xl bg-market-green items-center justify-center shadow-xs`}>
+                    <ShoppingCart size={14} color="white" />
+                  </TouchableOpacity>
                 </View>
               </View>
-              <Text style={tw`text-xs text-gray-500`}>{store.time}</Text>
-              <View style={tw`flex-row items-center gap-1 mt-1`}>
-                <Text style={tw`text-xs text-gray-700 font-medium`}>{store.min}</Text>
-                <Text style={tw`text-gray-300`}>•</Text>
-                <Text style={tw`text-xs text-market-green font-semibold`}>{store.delivery}</Text>
-              </View>
-            </View>
-          ))}
+            );
+          })}
         </ScrollView>
 
-        {/* Top Picks For You Section */}
+        {/* Popular Stores Near You Section */}
         <View style={tw`flex-row justify-between items-center px-4 mt-6 mb-3`}>
-          <Text style={tw`text-lg font-bold text-gray-900`}>Top Picks For You</Text>
-          <TouchableOpacity>
-            <Text style={tw`text-sm text-market-green font-semibold`}>See all</Text>
+          <Text style={tw`text-lg font-bold text-gray-900`}>Popular stores near you</Text>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/categories')}>
+            <Text style={tw`text-xs font-bold text-market-green`}>See all</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3 pb-1`}>
-          {topPicks.map((item) => (
-            <View key={item.id} style={tw`w-36 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm relative`}>
-              <TouchableOpacity style={tw`absolute top-3 right-3 z-10`}>
-                <Heart size={16} color="#D4D4D4" />
-              </TouchableOpacity>
-              <View style={tw`items-center bg-gray-50/50 rounded-xl p-2`}>
-                <Image source={item.image} style={tw`w-20 h-20`} resizeMode="contain" />
+
+        {/* Stores Horizontal Scroll List */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3.5 pb-2`}>
+          {popularStores.map((store) => (
+            <TouchableOpacity
+              key={store.id}
+              style={tw`w-52 bg-white rounded-2xl border border-gray-100 p-3.5 shadow-xs`}
+              activeOpacity={0.9}
+            >
+              <View style={tw`items-center my-2`}>
+                <Image source={store.logo} style={tw`w-14 h-14 rounded-full border border-gray-100`} resizeMode="contain" />
               </View>
-              <Text style={tw`text-xs font-bold text-gray-900 mt-2`} numberOfLines={1}>{item.name}</Text>
-              <Text style={tw`text-[10px] text-gray-500 mt-0.5`}>{item.qty}</Text>
-              <View style={tw`flex-row justify-between items-center mt-2`}>
-                <Text style={tw`text-sm font-bold text-gray-900`}>{item.price}</Text>
-                <TouchableOpacity style={tw`bg-market-green w-7 h-7 rounded-full items-center justify-center`}>
-                  <Plus size={16} color="white" />
-                </TouchableOpacity>
+
+              <View style={tw`flex-row items-center justify-center gap-1 mt-1`}>
+                <Text style={tw`text-sm font-bold text-gray-900`}>{store.name}</Text>
+                {store.verified && (
+                  <View style={tw`w-4 h-4 rounded-full bg-market-green items-center justify-center`}>
+                    <Text style={tw`text-white text-[9px] font-bold`}>✓</Text>
+                  </View>
+                )}
               </View>
-            </View>
+
+              <Text style={tw`text-[11px] text-gray-500 font-medium text-center mt-1`}>
+                {store.time} • {store.rating} ⭐
+              </Text>
+              <Text style={tw`text-[10px] text-gray-400 font-semibold text-center mt-0.5`}>
+                {store.minOrder}
+              </Text>
+            </TouchableOpacity>
           ))}
         </ScrollView>
-
-        {/* Flash Deals with Countdown */}
-        <View style={tw`flex-row justify-between items-center px-4 mt-6 mb-3`}>
-          <View style={tw`flex-row items-center`}>
-            <Text style={tw`text-lg font-bold text-gray-900`}>Flash Deals</Text>
-            <CountdownTimer />
-          </View>
-          <TouchableOpacity>
-            <Text style={tw`text-sm text-market-green font-semibold`}>See all</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3 pb-1`}>
-          {flashDeals.map((deal) => (
-            <View key={deal.id} style={tw`w-36 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm relative`}>
-              <View style={tw`absolute top-3 left-3 z-10 bg-red-500 px-1.5 py-0.5 rounded`}>
-                <Text style={tw`text-white text-[9px] font-bold`}>{deal.discount}</Text>
-              </View>
-              <View style={tw`items-center bg-gray-50/50 rounded-xl p-2`}>
-                <Image source={deal.image} style={tw`w-20 h-20`} resizeMode="contain" />
-              </View>
-              <Text style={tw`text-xs font-bold text-gray-900 mt-2`} numberOfLines={1}>{deal.name}</Text>
-              <Text style={tw`text-[10px] text-gray-500 mt-0.5`}>{deal.qty}</Text>
-              <View style={tw`flex-row items-center gap-1.5 mt-2`}>
-                <Text style={tw`text-sm font-bold text-gray-950`}>{deal.price}</Text>
-                <Text style={tw`text-[10px] text-gray-400 line-through`}>{deal.oldPrice}</Text>
-              </View>
-              <TouchableOpacity style={tw`bg-market-green w-7 h-7 rounded-full items-center justify-center absolute bottom-3 right-3`}>
-                <Plus size={16} color="white" />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* Buy Again Section */}
-        <View style={tw`flex-row justify-between items-center px-4 mt-6 mb-3`}>
-          <Text style={tw`text-lg font-bold text-gray-900`}>Buy Again</Text>
-          <TouchableOpacity>
-            <Text style={tw`text-sm text-market-green font-semibold`}>See all</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3 pb-1`}>
-          {buyAgain.map((item) => (
-            <View key={item.id} style={tw`w-36 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm relative`}>
-              <TouchableOpacity style={tw`absolute top-3 right-3 z-10`}>
-                <Heart size={16} color="#D4D4D4" />
-              </TouchableOpacity>
-              <View style={tw`items-center bg-gray-50/50 rounded-xl p-2`}>
-                <Image source={item.image} style={tw`w-20 h-20`} resizeMode="contain" />
-              </View>
-              <Text style={tw`text-xs font-bold text-gray-900 mt-2`} numberOfLines={1}>{item.name}</Text>
-              <Text style={tw`text-[10px] text-gray-500 mt-0.5`}>{item.qty}</Text>
-              <View style={tw`flex-row justify-between items-center mt-2`}>
-                <Text style={tw`text-sm font-bold text-gray-900`}>{item.price}</Text>
-                <TouchableOpacity style={tw`bg-market-green w-7 h-7 rounded-full items-center justify-center`}>
-                  <Plus size={16} color="white" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
-        </ScrollView>
-
-
       </ScrollView>
     </SafeAreaView>
   );
