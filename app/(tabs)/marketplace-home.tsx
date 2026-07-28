@@ -149,17 +149,23 @@ export default function MarketplaceHomeScreen() {
             </View>
 
             {/* Delivery Location Sub-Header */}
-            <TouchableOpacity
-                style={tw`px-4 pb-2 flex-row items-center gap-1.5`}
-                onPress={() => router.push('/(location)/index')}
-            >
-                <MapPin size={18} color="#0A8A3A" />
-                <Text style={tw`text-[11px] text-gray-500 font-medium`}>Deliver to</Text>
-                <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
-                    23 Adekunle Street, Yaba, Lagos
-                </Text>
-                <ChevronDown size={14} color="#171717" />
-            </TouchableOpacity>
+          <TouchableOpacity
+    style={tw`px-4 pb-2 flex-row items-center gap-2`}
+    onPress={() => router.push('/(location)/index')}
+>
+    <MapPin size={20} color="#0A8A3A" />
+    <View style={tw`flex-1`}>
+        <Text style={tw`text-[10px] text-gray-500 font-semibold uppercase tracking-wider`}>
+            Deliver to
+        </Text>
+        <View style={tw`flex-row items-center gap-1`}>
+            <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
+                23 Adekunle Street, Yaba, Lagos
+            </Text>
+            <ChevronDown size={14} color="#171717" />
+        </View>
+    </View>
+</TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
                 {/* Search Bar Input */}

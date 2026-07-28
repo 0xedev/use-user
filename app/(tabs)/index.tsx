@@ -1,10 +1,10 @@
+
 import tw from '@/lib/tw';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ArrowRight,
   Bell,
   ChevronDown,
-  ChevronRight,
   Heart,
   MapPin,
   Scan,
@@ -15,6 +15,12 @@ import {
 import { useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import BillsScreen from './bills-home';
+import FoodsScreen from './food-home';
+import GadgetsScreen from './gadgets-home';
+import LogisticsScreen from './logistics-home';
+import MarketplaceHomeScreen from './marketplace-home';
 
 const categories = [
   { id: 1, name: 'Groceries', icon: '🛒', bg: 'bg-emerald-50' },
@@ -96,8 +102,17 @@ const popularStores = [
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { service } = useLocalSearchParams<{ service?: string }>();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [wishlist, setWishlist] = useState<number[]>([]);
+
+  // Dynamically render chosen service layout while preserving "Home" tab active state
+  if (service === 'food') return <FoodsScreen />;
+  if (service === 'gadgets') return <GadgetsScreen />;
+  if (service === 'bills') return <BillsScreen />;
+  if (service === 'marketplace') return <MarketplaceHomeScreen />;
+  if (service === 'logistics') return <LogisticsScreen />;
 
   const toggleWishlist = (id: number) => {
     setWishlist(prev =>
@@ -111,14 +126,16 @@ export default function HomeScreen() {
       <View style={tw`px-4 pt-2 pb-2 flex-row items-center justify-between`}>
         {/* Location Delivery Selector */}
         <TouchableOpacity
-          style={tw`flex-row items-center gap-1.5 flex-1 pr-2`}
+          style={tw`px-4 pb-2 flex-row items-center gap-2`}
           onPress={() => router.push('/(location)/index')}
         >
-          <MapPin size={22} color="#0A8A3A" />
+          <MapPin size={20} color="#0A8A3A" />
           <View style={tw`flex-1`}>
-            <Text style={tw`text-[11px] text-gray-500 font-medium`}>Deliver to</Text>
+            <Text style={tw`text-[10px] text-gray-500 font-semibold uppercase tracking-wider`}>
+              Deliver to
+            </Text>
             <View style={tw`flex-row items-center gap-1`}>
-              <Text style={tw`text-sm font-bold text-gray-900`} numberOfLines={1}>
+              <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
                 23 Adekunle Street, Yaba, Lagos
               </Text>
               <ChevronDown size={14} color="#171717" />
@@ -132,13 +149,11 @@ export default function HomeScreen() {
             <Search size={22} color="#171717" />
           </TouchableOpacity>
 
-          {/* Notification Bell */}
           <TouchableOpacity style={tw`relative w-9 h-9 items-center justify-center`}>
             <Bell size={22} color="#171717" />
             <View style={tw`absolute top-1 right-1 w-2 h-2 bg-market-green rounded-full`} />
           </TouchableOpacity>
 
-          {/* Shopping Cart */}
           <TouchableOpacity
             style={tw`relative w-9 h-9 items-center justify-center`}
             onPress={() => router.push('/cart')}
@@ -178,7 +193,6 @@ export default function HomeScreen() {
               Get everything you need at your doorstep.
             </Text>
 
-            {/* CTA Button */}
             <TouchableOpacity
               style={tw`bg-market-green px-4 py-2.5 rounded-xl flex-row items-center gap-1.5 self-start mt-4 shadow-sm`}
               onPress={() => router.push('/(tabs)/categories')}
@@ -188,14 +202,12 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Banner Hero Image & Offer Badge */}
           <View style={tw`w-2/5 items-center justify-center relative`}>
             <Image
               source={require('@/assets/images/grocery-bag-hero.png')}
               style={tw`w-32 h-32`}
               resizeMode="contain"
             />
-            {/* 30% OFF Badge */}
             <View style={tw`absolute -bottom-1 -right-1 bg-[#FACC15] w-14 h-14 rounded-full items-center justify-center border-2 border-white shadow-md`}>
               <Text style={tw`text-[8px] font-bold text-gray-900 text-center uppercase`}>Up to</Text>
               <Text style={tw`text-xs font-extrabold text-gray-950`}>30%</Text>
@@ -230,31 +242,7 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
 
-        {/* Delivery Fee Savings Tracker Banner */}
-        <View style={tw`mx-4 my-3 bg-[#F0FDF4] rounded-2xl p-4 border border-market-green/10 flex-row items-center justify-between`}>
-          <View style={tw`flex-row items-center gap-3.5 flex-1 pr-2`}>
-            <View style={tw`w-12 h-12 rounded-full bg-white items-center justify-center border border-emerald-100 shadow-xs`}>
-              <Text style={tw`text-2xl`}>🛵</Text>
-            </View>
-            <View style={tw`flex-1`}>
-              <Text style={tw`text-sm font-bold text-gray-900`}>Lower delivery fee!</Text>
-              <Text style={tw`text-[11px] text-gray-500 font-medium mt-0.5`}>
-                Add ₦5,000 more to enjoy reduced delivery fee.
-              </Text>
-              {/* Progress bar track */}
-              <View style={tw`w-full h-1.5 bg-gray-200 rounded-full mt-2 overflow-hidden`}>
-                <View style={tw`w-[56%] h-full bg-market-green rounded-full`} />
-              </View>
-              <View style={tw`flex-row justify-between mt-1`}>
-                <Text style={tw`text-[9px] text-market-green font-bold`}>₦2,800</Text>
-                <Text style={tw`text-[9px] text-gray-400 font-semibold`}>₦5,000</Text>
-              </View>
-            </View>
-          </View>
-          <ChevronRight size={18} color="#0A8A3A" />
-        </View>
-
-        {/* Best Deals For You Section */}
+        {/* Best Deals Section */}
         <View style={tw`flex-row justify-between items-center px-4 mt-4 mb-3`}>
           <Text style={tw`text-lg font-bold text-gray-900`}>Best deals for you</Text>
           <TouchableOpacity onPress={() => router.push('/(tabs)/categories')}>
@@ -262,19 +250,16 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Product Horizontal Scroll List */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3.5 pb-2`}>
           {bestDeals.map((item) => {
             const isLiked = wishlist.includes(item.id);
 
             return (
               <View key={item.id} style={tw`w-40 bg-white rounded-2xl border border-gray-100 p-3 shadow-xs relative`}>
-                {/* Discount Pill Badge */}
                 <View style={tw`absolute top-3 left-3 bg-emerald-100 px-2 py-0.5 rounded-md z-10`}>
                   <Text style={tw`text-[10px] font-bold text-market-green`}>{item.discount}</Text>
                 </View>
 
-                {/* Like Heart Button */}
                 <TouchableOpacity
                   style={tw`absolute top-3 right-3 z-10`}
                   onPress={() => toggleWishlist(item.id)}
@@ -286,7 +271,6 @@ export default function HomeScreen() {
                   />
                 </TouchableOpacity>
 
-                {/* Image Preview */}
                 <TouchableOpacity
                   style={tw`items-center justify-center my-2 h-28 bg-gray-50/50 rounded-xl p-2`}
                   onPress={() => router.push(`/product/${item.id}`)}
@@ -294,13 +278,11 @@ export default function HomeScreen() {
                   <Image source={item.image} style={tw`w-20 h-20`} resizeMode="contain" />
                 </TouchableOpacity>
 
-                {/* Product Info */}
                 <Text style={tw`text-xs font-bold text-gray-900 leading-4 mt-1`} numberOfLines={2}>
                   {item.name}
                 </Text>
                 <Text style={tw`text-[10px] text-gray-400 font-semibold mt-0.5`}>{item.unit}</Text>
 
-                {/* Pricing & Add Button */}
                 <View style={tw`flex-row items-end justify-between mt-2`}>
                   <View>
                     <Text style={tw`text-sm font-extrabold text-gray-900`}>{item.price}</Text>
@@ -313,45 +295,6 @@ export default function HomeScreen() {
               </View>
             );
           })}
-        </ScrollView>
-
-        {/* Popular Stores Near You Section */}
-        <View style={tw`flex-row justify-between items-center px-4 mt-6 mb-3`}>
-          <Text style={tw`text-lg font-bold text-gray-900`}>Popular stores near you</Text>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/categories')}>
-            <Text style={tw`text-xs font-bold text-market-green`}>See all</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Stores Horizontal Scroll List */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3.5 pb-2`}>
-          {popularStores.map((store) => (
-            <TouchableOpacity
-              key={store.id}
-              style={tw`w-52 bg-white rounded-2xl border border-gray-100 p-3.5 shadow-xs`}
-              activeOpacity={0.9}
-            >
-              <View style={tw`items-center my-2`}>
-                <Image source={store.logo} style={tw`w-14 h-14 rounded-full border border-gray-100`} resizeMode="contain" />
-              </View>
-
-              <View style={tw`flex-row items-center justify-center gap-1 mt-1`}>
-                <Text style={tw`text-sm font-bold text-gray-900`}>{store.name}</Text>
-                {store.verified && (
-                  <View style={tw`w-4 h-4 rounded-full bg-market-green items-center justify-center`}>
-                    <Text style={tw`text-white text-[9px] font-bold`}>✓</Text>
-                  </View>
-                )}
-              </View>
-
-              <Text style={tw`text-[11px] text-gray-500 font-medium text-center mt-1`}>
-                {store.time} • {store.rating} ⭐
-              </Text>
-              <Text style={tw`text-[10px] text-gray-400 font-semibold text-center mt-0.5`}>
-                {store.minOrder}
-              </Text>
-            </TouchableOpacity>
-          ))}
         </ScrollView>
       </ScrollView>
     </SafeAreaView>

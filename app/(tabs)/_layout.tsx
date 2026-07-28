@@ -1,15 +1,34 @@
+
 import { useColorScheme } from '@/components/useColorScheme';
 import tw from '@/lib/tw';
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Tabs, useLocalSearchParams } from 'expo-router';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { service } = useLocalSearchParams<{ service?: string }>();
+
+  // Dynamically matches bottom tab active icon color to the active service theme
+  const getActiveTabColor = () => {
+    switch (service) {
+      case 'gadgets':
+        return '#1D4ED8'; // Tech Blue Theme
+      case 'marketplace':
+        return '#7C3AED'; // Royal Purple Theme
+      case 'food':
+      case 'bills':
+      case 'logistics':
+      default:
+        return '#0A8A3A'; // useMarket Green Theme
+    }
+  };
+
+  const activeColor = getActiveTabColor();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#0A8A3A',
+        tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: '#999',
         headerShown: false,
         tabBarStyle: tw`bg-white border-t border-gray-200 h-16 pb-2`,

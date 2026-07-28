@@ -90,18 +90,23 @@ export default function BillsScreen() {
                 </View>
             </View>
 
-            {/* Delivery Location Sub-Header */}
-            <TouchableOpacity
-                style={tw`px-4 pb-2 flex-row items-center gap-1.5`}
-                onPress={() => router.push('/(location)/index')}
-            >
-                <MapPin size={18} color="#0A8A3A" />
-                <Text style={tw`text-[11px] text-gray-500 font-medium`}>Deliver to</Text>
-                <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
-                    23 Adekunle Street, Yaba, Lagos
-                </Text>
-                <ChevronDown size={14} color="#171717" />
-            </TouchableOpacity>
+   <TouchableOpacity
+    style={tw`px-4 pb-2 flex-row items-center gap-2`}
+    onPress={() => router.push('/(location)/index')}
+>
+    <MapPin size={20} color="#0A8A3A" />
+    <View style={tw`flex-1`}>
+        <Text style={tw`text-[10px] text-gray-500 font-semibold uppercase tracking-wider`}>
+            Deliver to
+        </Text>
+        <View style={tw`flex-row items-center gap-1`}>
+            <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
+                23 Adekunle Street, Yaba, Lagos
+            </Text>
+            <ChevronDown size={14} color="#171717" />
+        </View>
+    </View>
+</TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
                 {/* Hero Promotion Banner */}
@@ -118,15 +123,15 @@ export default function BillsScreen() {
                     {/* Banner Phone Graphic */}
                     <View style={tw`w-2/5 items-center justify-center relative`}>
                         <Image
-                            source={require('@/assets/images/grocery-bag-hero.png')} // Replace with bill payment phone graphic asset
-                            style={tw`w-28 h-28`}
-                            resizeMode="contain"
+                            source={require('@/assets/image-bill/bill-home.png')} // Replace with bill payment phone graphic asset
+                            style={tw`w-33 h-28`}
+                        
                         />
                     </View>
                 </View>
 
                 {/* Search & History Bar */}
-                <View style={tw`px-4 my-3`}>
+                <View style={tw`px-4 my-2`}>
                     <View style={tw`flex-row items-center border border-gray-200 rounded-2xl p-1.5 bg-white shadow-xs`}>
                         <View style={tw`flex-row items-center flex-1 px-3`}>
                             <Search size={18} color="#9CA3AF" style={tw`mr-2.5`} />
@@ -151,7 +156,7 @@ export default function BillsScreen() {
                 </View>
 
                 {/* Bill Categories Header */}
-                <View style={tw`flex-row justify-between items-center px-4 mt-2 mb-3`}>
+                <View style={tw`flex-row justify-between items-center px-4 mt-1 mb-1`}>
                     <Text style={tw`text-lg font-bold text-gray-900`}>Bill Categories</Text>
                     <TouchableOpacity>
                         <Text style={tw`text-xs font-bold text-market-green`}>View all</Text>
@@ -159,7 +164,7 @@ export default function BillsScreen() {
                 </View>
 
                 {/* 5-Column Grid Categories */}
-                <View style={tw`px-4 flex-row flex-wrap justify-between gap-y-4 mb-6`}>
+                <View style={tw`px-4 flex-row flex-wrap justify-between gap-y-3 mb-2`}>
                     {billCategories.map((cat) => (
                         <TouchableOpacity
                             key={cat.id}
@@ -184,7 +189,7 @@ export default function BillsScreen() {
                 </View>
 
                 {/* Recent Transactions List Card */}
-                <View style={tw`mx-4 bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-xs mb-6`}>
+                <View style={tw`mx-3 bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-xs mb-4`}>
                     {recentPayments.map((item, index) => (
                         <TouchableOpacity
                             key={item.id}
@@ -219,25 +224,7 @@ export default function BillsScreen() {
                     ))}
                 </View>
 
-                {/* Cashback Promotion Banner */}
-                <View style={tw`mx-4 bg-[#F0FDF4] rounded-2xl p-4 border border-market-green/20 flex-row items-center justify-between shadow-xs`}>
-                    <View style={tw`flex-row items-center gap-3.5 flex-1 pr-2`}>
-                        <View style={tw`w-12 h-12 rounded-2xl bg-market-green/10 items-center justify-center`}>
-                            <Text style={tw`text-2xl`}>💰</Text>
-                        </View>
-
-                        <View style={tw`flex-1`}>
-                            <Text style={tw`text-sm font-bold text-gray-900`}>Get up to 5% cashback</Text>
-                            <Text style={tw`text-[11px] text-gray-500 font-medium mt-0.5`}>
-                                on airtime, data and cable TV subscriptions.
-                            </Text>
-                        </View>
-                    </View>
-
-                    <TouchableOpacity style={tw`bg-market-green px-3.5 py-2 rounded-xl shadow-xs`}>
-                        <Text style={tw`text-white text-xs font-bold`}>Learn More</Text>
-                    </TouchableOpacity>
-                </View>
+              
             </ScrollView>
         </SafeAreaView>
     );

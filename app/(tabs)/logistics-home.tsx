@@ -4,18 +4,12 @@ import {
     ArrowRight,
     Bell,
     ChevronDown,
-    ChevronRight,
     Heart,
     MapPin,
-    Package,
-    Plane,
     Search,
-    ShieldCheck,
-    Ship,
     ShoppingBag,
     ShoppingCart,
-    SlidersHorizontal,
-    Truck
+    SlidersHorizontal
 } from 'lucide-react-native';
 import { useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -114,17 +108,22 @@ export default function LogisticsScreen() {
                 </View>
             </View>
 
-            {/* Delivery Location Sub-Header */}
             <TouchableOpacity
-                style={tw`px-4 pb-2 flex-row items-center gap-1.5`}
+                style={tw`px-4 pb-2 flex-row items-center gap-2`}
                 onPress={() => router.push('/(location)/index')}
             >
-                <MapPin size={18} color="#0A8A3A" />
-                <Text style={tw`text-[11px] text-gray-500 font-medium`}>Deliver to</Text>
-                <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
-                    23 Adekunle Street, Yaba, Lagos
-                </Text>
-                <ChevronDown size={14} color="#171717" />
+                <MapPin size={20} color="#0A8A3A" />
+                <View style={tw`flex-1`}>
+                    <Text style={tw`text-[10px] text-gray-500 font-semibold uppercase tracking-wider`}>
+                        Deliver to
+                    </Text>
+                    <View style={tw`flex-row items-center gap-1`}>
+                        <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
+                            23 Adekunle Street, Yaba, Lagos
+                        </Text>
+                        <ChevronDown size={14} color="#171717" />
+                    </View>
+                </View>
             </TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
@@ -205,7 +204,7 @@ export default function LogisticsScreen() {
                         const isLiked = wishlist.includes(item.id);
 
                         return (
-                            <View key={item.id} style={tw`w-42 bg-white rounded-2xl border border-gray-100 p-3 shadow-xs relative`}>
+                            <View key={item.id} style={tw`w-38 bg-white rounded-2xl border border-gray-100 p-3 shadow-xs relative`}>
                                 {/* Discount Pill Badge */}
                                 <View style={tw`absolute top-3 left-3 bg-emerald-100 px-2 py-0.5 rounded-md z-10`}>
                                     <Text style={tw`text-[10px] font-bold text-market-green`}>{item.discount}</Text>
@@ -279,24 +278,9 @@ export default function LogisticsScreen() {
                     ))}
                 </ScrollView>
 
-                {/* Trust Banner Card */}
-                <View style={tw`mx-4 my-4 bg-[#F0FDF4] rounded-2xl p-4 border border-market-green/20 flex-row items-center justify-between shadow-xs`}>
-                    <View style={tw`flex-row items-center gap-3.5 flex-1 pr-2`}>
-                        <View style={tw`w-10 h-10 rounded-full bg-market-green items-center justify-center`}>
-                            <ShieldCheck size={20} color="white" />
-                        </View>
-                        <View style={tw`flex-1`}>
-                            <Text style={tw`text-xs font-bold text-gray-900`}>Trusted by thousands</Text>
-                            <Text style={tw`text-[10px] text-gray-500 font-semibold mt-0.5`}>
-                                Safe, secure and on-time deliveries.
-                            </Text>
-                        </View>
-                    </View>
 
-                    <TouchableOpacity style={tw`bg-market-green px-3.5 py-2 rounded-xl shadow-xs`}>
-                        <Text style={tw`text-white text-xs font-bold`}>Learn More</Text>
-                    </TouchableOpacity>
-                </View>
+
+
             </ScrollView>
         </SafeAreaView>
     );

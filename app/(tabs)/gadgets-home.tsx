@@ -7,9 +7,7 @@ import {
     ChevronDown,
     Heart,
     MapPin,
-    RotateCcw,
     Search,
-    ShieldCheck,
     ShoppingBag,
     ShoppingCart
 } from 'lucide-react-native';
@@ -22,8 +20,8 @@ const gadgetCategories = [
     { id: 2, name: 'Laptops', icon: '💻', bg: 'bg-blue-50' },
     { id: 3, name: 'Accessories', icon: '🎧', bg: 'bg-blue-50' },
     { id: 4, name: 'Tablets', icon: '📲', bg: 'bg-blue-50' },
-    { id: 5, name: 'Wearables', icon: '⌚', bg: 'bg-blue-50' },
-    { id: 6, name: 'All\nCategories', icon: '🎛️', bg: 'bg-gray-100' },
+    // { id: 5, name: 'Wearables', icon: '⌚', bg: 'bg-blue-50' },
+    { id: 5, name: 'All\nCategories', icon: '🎛️', bg: 'bg-gray-100' },
 ];
 
 const bestDeals = [
@@ -66,12 +64,12 @@ const bestDeals = [
 ];
 
 const topBrands = [
-    { id: 1, name: 'Apple', logoText: '🍎' },
-    { id: 2, name: 'Samsung', logoText: 'SAMSUNG' },
-    { id: 3, name: 'HP', logoText: 'hp' },
-    { id: 4, name: 'Dell', logoText: 'DELL' },
-    { id: 5, name: 'Lenovo', logoText: 'Lenovo' },
-    { id: 6, name: 'More', logoText: '🎛️' },
+    { id: 1, name: 'Apple', logo: require('@/assets/images-gadget/apple.png') },
+    { id: 2, name: 'Samsung', logo: require('@/assets/images-gadget/Samsung.png') },
+    { id: 3, name: 'HP', logo: require('@/assets/images-gadget/hp.png') },
+    { id: 4, name: 'Dell', logo: require('@/assets/images-gadget/dell.png') },
+    { id: 5, name: 'Lenovo', logo: require('@/assets/images-gadget/lenovo.png') },
+    { id: 6, name: 'More', logo: require('@/assets/images-gadget/dell.png') },
 ];
 
 export default function GadgetsScreen() {
@@ -112,27 +110,32 @@ export default function GadgetsScreen() {
                 </View>
             </View>
 
-            {/* Delivery Location Sub-Header */}
             <TouchableOpacity
-                style={tw`px-4 pb-2 flex-row items-center gap-1.5`}
+                style={tw`px-4 pb-2 flex-row items-center gap-2`}
                 onPress={() => router.push('/(location)/index')}
             >
-                <MapPin size={18} color="#0A8A3A" />
-                <Text style={tw`text-[11px] text-gray-500 font-medium`}>Deliver to</Text>
-                <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
-                    23 Adekunle Street, Yaba, Lagos
-                </Text>
-                <ChevronDown size={14} color="#171717" />
+                <MapPin size={20} color="#0A8A3A" />
+                <View style={tw`flex-1`}>
+                    <Text style={tw`text-[10px] text-gray-500 font-semibold uppercase tracking-wider`}>
+                        Deliver to
+                    </Text>
+                    <View style={tw`flex-row items-center gap-1`}>
+                        <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
+                            23 Adekunle Street, Yaba, Lagos
+                        </Text>
+                        <ChevronDown size={14} color="#171717" />
+                    </View>
+                </View>
             </TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
                 {/* Search Bar Input */}
                 <View style={tw`px-4 my-2`}>
-                    <View style={tw`flex-row items-center border border-gray-200 rounded-2xl px-4 h-13 bg-white shadow-xs`}>
+                    <View style={tw`flex-row items-center border border-gray-200 rounded-2xl px-4 h-10 bg-white shadow-xs`}>
                         <Search size={18} color="#9CA3AF" style={tw`mr-3`} />
                         <TextInput
                             style={tw`flex-1 text-sm text-gray-900 h-full font-medium`}
-                            placeholder="Search for phones, laptops, accessories..."
+                            placeholder="Search for phones, laptops, "
                             placeholderTextColor="#9CA3AF"
                             value={searchQuery}
                             onChangeText={setSearchQuery}
@@ -144,7 +147,7 @@ export default function GadgetsScreen() {
                 {/* Hero Promotion Banner (Blue Tech Theme) */}
                 <View style={tw`mx-4 my-2 bg-[#EFF6FF] rounded-3xl p-5 relative overflow-hidden flex-row items-center justify-between border border-blue-100`}>
                     <View style={tw`w-3/5 z-10 pr-2`}>
-                        <Text style={tw`text-2xl font-extrabold text-gray-950 leading-7`}>
+                        <Text style={tw`text-xl font-extrabold text-gray-950 leading-7`}>
                             Your favorite{'\n'}
                             <Text style={tw`text-[#1D4ED8]`}>gadgets & more</Text>
                         </Text>
@@ -165,12 +168,12 @@ export default function GadgetsScreen() {
                     {/* Banner Hero Tech Graphic & Offer Badge */}
                     <View style={tw`w-2/5 items-center justify-center relative`}>
                         <Image
-                            source={require('@/assets/images/grocery-bag-hero.png')} // Replace with Laptop / Gadget asset
-                            style={tw`w-32 h-32`}
-                            resizeMode="contain"
+                            source={require('@/assets/images-gadget/home-gadget.png')} // Replace with Laptop / Gadget asset
+                            style={tw`w-50 h-40`}
+
                         />
                         {/* 25% OFF Badge */}
-                        <View style={tw`absolute -bottom-1 -right-1 bg-[#1D4ED8] w-14 h-14 rounded-full items-center justify-center border-2 border-white shadow-md`}>
+                        <View style={tw`absolute -top-1 -right-1 bg-[#1D4ED8] w-12 h-12 rounded-full items-center justify-center border-2 border-white shadow-md`}>
                             <Text style={tw`text-[8px] font-bold text-white/80 uppercase`}>Up to</Text>
                             <Text style={tw`text-xs font-extrabold text-white`}>25%</Text>
                             <Text style={tw`text-[8px] font-bold text-white/80 uppercase`}>OFF</Text>
@@ -190,21 +193,21 @@ export default function GadgetsScreen() {
                     {gadgetCategories.map((cat) => (
                         <TouchableOpacity
                             key={cat.id}
-                            style={tw`items-center gap-1.5 w-18`}
+                            style={tw`items-center gap-1.5 w-14`}
                             onPress={() => router.push('/(tabs)/categories')}
                         >
-                            <View style={tw`w-16 h-16 rounded-2xl ${cat.bg} items-center justify-center border border-blue-100 shadow-xs`}>
-                                <Text style={tw`text-2xl`}>{cat.icon}</Text>
+                            <View style={tw`w-14 h-14 rounded-2xl ${cat.bg} items-center justify-center border border-blue-100 shadow-xs`}>
+                                <Text style={tw`text-xl`}>{cat.icon}</Text>
                             </View>
-                            <Text style={tw`text-[11px] font-semibold text-gray-800 text-center leading-3.5`}>
+                            <Text style={tw`text-[10px] font-semibold text-gray-800 text-center `}>
                                 {cat.name}
                             </Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
 
-                {/* Trust Guarantees Strip */}
-                <View style={tw`mx-4 my-3 bg-[#F8FAFC] rounded-2xl py-3 px-3 border border-gray-100 flex-row items-center justify-around shadow-xs`}>
+                {/* Trust Guarantees Strip 
+                <View style={tw`mx-4 bg-[#F8FAFC] rounded-2xl py-3 px-3 border border-gray-100 flex-row items-center justify-around shadow-xs`}>
                     <View style={tw`flex-row items-center gap-1.5`}>
                         <ShieldCheck size={16} color="#1D4ED8" />
                         <View>
@@ -232,10 +235,10 @@ export default function GadgetsScreen() {
                             <Text style={tw`text-[8px] text-gray-400`}>7-day return policy</Text>
                         </View>
                     </View>
-                </View>
+                </View>*/}
 
                 {/* Best Deals For You Section */}
-                <View style={tw`flex-row justify-between items-center px-4 mt-4 mb-3`}>
+                <View style={tw`flex-row justify-between items-center px-5  mb-3`}>
                     <Text style={tw`text-lg font-bold text-gray-900`}>Best deals for you</Text>
                     <TouchableOpacity onPress={() => router.push('/(tabs)/categories')}>
                         <Text style={tw`text-xs font-bold text-[#1D4ED8]`}>See all</Text>
@@ -243,12 +246,12 @@ export default function GadgetsScreen() {
                 </View>
 
                 {/* Product Horizontal Scroll List */}
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3.5 pb-2`}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-2 gap-3.5 pb-2`}>
                     {bestDeals.map((item) => {
                         const isLiked = wishlist.includes(item.id);
 
                         return (
-                            <View key={item.id} style={tw`w-42 bg-white rounded-2xl border border-gray-100 p-3 shadow-xs relative`}>
+                            <View key={item.id} style={tw`w-31 h- bg-white rounded-2xl border border-gray-100 p-3 shadow-xs relative`}>
                                 {/* Discount Pill Badge */}
                                 <View style={tw`absolute top-3 left-3 bg-blue-100 px-2 py-0.5 rounded-md z-10`}>
                                     <Text style={tw`text-[10px] font-bold text-[#1D4ED8]`}>{item.discount}</Text>
@@ -326,16 +329,18 @@ export default function GadgetsScreen() {
                 </View>
 
                 {/* Brands Horizontal Scroll */}
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3 pb-2`}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-3 gap-3 pb-2`}>
                     {topBrands.map((brand) => (
                         <TouchableOpacity
                             key={brand.id}
-                            style={tw`w-24 h-20 bg-white rounded-2xl border border-gray-100 items-center justify-center p-2 shadow-xs`}
+                            style={tw`w-18 h-18 bg-white rounded-2xl border border-gray-100 items-center justify-center p-2 shadow-xs`}
                         >
-                            <Text style={tw`text-sm font-extrabold text-gray-900 text-center`}>
-                                {brand.logoText}
-                            </Text>
-                            <Text style={tw`text-[10px] font-semibold text-gray-500 mt-1`}>
+                            <Image
+                                source={brand.logo}
+                                style={tw`w-10 h-10`}
+                                resizeMode="contain"
+                            />
+                            <Text style={tw`text-[10px] font-semibold text-gray-700 mt-1.5`}>
                                 {brand.name}
                             </Text>
                         </TouchableOpacity>

@@ -1,10 +1,10 @@
+
 import tw from '@/lib/tw';
 import { useRouter } from 'expo-router';
 import {
     ChevronRight,
     CreditCard,
     Headphones,
-    ShieldCheck,
     ShoppingBag,
     Smartphone,
     Sparkles,
@@ -17,26 +17,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function ServicesHubScreen() {
     const router = useRouter();
 
+    // Uses router.push to preserve Screen 2 (Hub) in navigation history stack
     const handleSelectService = (serviceKey: string) => {
-        switch (serviceKey) {
-            case 'food':
-                router.replace('/(tabs)/food-home');
-                break;
-            case 'gadgets':
-                router.replace('/(tabs)/gadgets-home');
-                break;
-            case 'bills':
-                router.replace('/(tabs)/bills-home');
-                break;
-            case 'marketplace':
-                router.replace('/(tabs)/marketplace-home');
-                break;
-            case 'logistics':
-                router.replace('/(tabs)/logistics-home');
-                break;
-            default:
-                router.replace('/(tabs)');
-        }
+        router.push({
+            pathname: '/(tabs)',
+            params: { service: serviceKey },
+        });
     };
 
     return (
@@ -48,7 +34,6 @@ export default function ServicesHubScreen() {
                     <Image
                         source={require('@/assets/images/logo.png')}
                         style={tw`w-15 h-13`}
-                        
                     />
                     <View>
                         <Text style={tw`text-xl text-market-green font-medium`}>
@@ -85,19 +70,17 @@ export default function ServicesHubScreen() {
                 <View style={tw`flex-row gap-3.5 mb-3.5`}>
                     {/* Left Column */}
                     <View style={tw`flex-1 gap-3.5`}>
-                        {/* 1. Browse Foods & Groceries (Hero Brand Card) */}
+                        {/* 1. Foods & Groceries */}
                         <TouchableOpacity
                             style={tw`bg-market-green rounded-3xl p-5 h-64 justify-between relative overflow-hidden shadow-sm`}
                             onPress={() => handleSelectService('food')}
                             activeOpacity={0.9}
                         >
-                            {/* Popular Badge */}
                             <View style={tw`bg-white/20 border border-white/30 self-start px-2.5 py-1 rounded-full flex-row items-center gap-1`}>
                                 <Sparkles size={11} color="white" />
                                 <Text style={tw`text-[10px] text-white font-bold`}>Most Popular</Text>
                             </View>
 
-                            {/* Icon Circle */}
                             <View style={tw`w-20 h-20 rounded-full bg-white/15 items-center justify-center self-center my-1 border border-white/20`}>
                                 <ShoppingBag size={38} color="white" />
                             </View>
@@ -111,7 +94,6 @@ export default function ServicesHubScreen() {
                                 </Text>
                             </View>
 
-                            {/* Background Decorative Element */}
                             <View style={tw`absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/5`} />
                         </TouchableOpacity>
 
@@ -184,9 +166,9 @@ export default function ServicesHubScreen() {
                     </View>
                 </View>
 
-                {/* 5. Logistics & Express Delivery (Full-Width Card) */}
+                {/* 5. Logistics & Express */}
                 <TouchableOpacity
-                    style={tw`bg-white border border-market-green/30 rounded-3xl p-4.5 flex-row items-center justify-between mt-1 shadow-sm `}
+                    style={tw`bg-white border border-market-green/30 rounded-3xl p-4.5 flex-row items-center justify-between mt-1 shadow-sm`}
                     onPress={() => handleSelectService('logistics')}
                     activeOpacity={0.9}
                 >
