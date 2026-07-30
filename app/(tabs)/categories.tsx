@@ -1,334 +1,355 @@
-
 import tw from '@/lib/tw';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import {
+    ArrowRight,
     Bell,
     ChevronDown,
-    ChevronRight,
-    Filter,
     MapPin,
+    Plus,
     Search,
     ShoppingBag,
-    Star,
-    X
+    SlidersHorizontal,
+    Star
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// Category & Vendor Store Datasets
-const categoryDatasets: {
-    [key: string]: {
-        heroTitle: string;
-        bannerTitle: string;
-        bannerSub: string;
-        bannerBadge: string;
-        pills: string[];
-        stores: { id: string; name: string; rating: string; time: string; verified: boolean; bg: string; logo: string }[];
-        items: { id: string; name: string; itemsCount: string; icon: string; bg: string; category: string }[];
-    };
-} = {
-    food: {
-        heroTitle: 'Food & Groceries',
-        bannerTitle: 'Fresh Groceries',
-        bannerSub: 'Delivered to your door in 30 mins 🛵',
-        bannerBadge: 'EXPRESS DELIVERY',
-        pills: ['All', 'Produce', 'Grains & Staples', 'Oils & Spices', 'Meat & Seafood', 'Dairy & Drinks'],
-        stores: [
-            { id: 'konga-fresh', name: 'Konga Fresh', rating: '4.7', time: '20-30 min', verified: true, bg: 'bg-emerald-600', logo: '🥦' },
-            { id: 'gloo-mart', name: 'Gloo Mart', rating: '4.6', time: '15-25 min', verified: true, bg: 'bg-green-600', logo: '🛒' },
-            { id: 'shoprite', name: 'Shoprite', rating: '4.8', time: '25-35 min', verified: true, bg: 'bg-red-600', logo: '🏪' },
-            { id: 'spar', name: 'SPAR Supermarket', rating: '4.5', time: '20-30 min', verified: true, bg: 'bg-blue-600', logo: '🛒' },
-        ],
-        items: [
-            { id: 'fruits-vegetables', name: 'Fruits & Vegetables', itemsCount: '2,350+ items', icon: '🥬', bg: 'bg-emerald-50', category: 'Produce' },
-            { id: 'rice-grains', name: 'Rice & Grains', itemsCount: '1,850+ items', icon: '🌾', bg: 'bg-amber-50', category: 'Grains & Staples' },
-            { id: 'beans-pulses', name: 'Beans & Pulses', itemsCount: '920+ items', icon: '🫘', bg: 'bg-red-50', category: 'Grains & Staples' },
-            { id: 'cooking-oil', name: 'Cooking Oils & Fats', itemsCount: '650+ items', icon: '🍾', bg: 'bg-yellow-50', category: 'Oils & Spices' },
-            { id: 'spices-seasoning', name: 'Spices & Seasoning', itemsCount: '1,100+ items', icon: '🧂', bg: 'bg-orange-50', category: 'Oils & Spices' },
-            { id: 'meat-seafood', name: 'Meat & Fresh Seafood', itemsCount: '850+ items', icon: '🥩', bg: 'bg-rose-50', category: 'Meat & Seafood' },
-            { id: 'dairy-eggs', name: 'Dairy & Farm Eggs', itemsCount: '1,250+ items', icon: '🥛', bg: 'bg-blue-50', category: 'Dairy & Drinks' },
-            { id: 'drinks-beverages', name: 'Beverages & Juices', itemsCount: '2,100+ items', icon: '🥤', bg: 'bg-indigo-50', category: 'Dairy & Drinks' },
-        ],
+// 1. Service Quick Category Cards Dataset
+const mainServices = [
+    {
+        id: 'food',
+        title: 'Order Food',
+        sub: 'From restaurants near you',
+        icon: '🍔',
+        bgColor: 'bg-orange-50/80',
+        borderColor: 'border-orange-100',
+        btnColor: 'bg-[#EF4444]',
+        route: '/(tabs)/category-detail',
     },
+    {
+        id: 'groceries',
+        title: 'Shop Groceries',
+        sub: 'Fresh & fast delivery',
+        icon: '🛍️',
+        bgColor: 'bg-emerald-50/80',
+        borderColor: 'border-emerald-100',
+        btnColor: 'bg-[#10B981]',
+        route: '/(tabs)/category/rice-grains',
+    },
+    {
+        id: 'pharmacy',
+        title: 'Pharmacy',
+        sub: 'Health essentials delivered',
+        icon: '💊',
+        bgColor: 'bg-purple-50/80',
+        borderColor: 'border-purple-100',
+        btnColor: 'bg-[#8B5CF6]',
+        route: '/store/medplus',
+    },
+    {
+        id: 'package',
+        title: 'Send Package',
+        sub: 'Fast & reliable delivery',
+        icon: '📦',
+        bgColor: 'bg-sky-50/80',
+        borderColor: 'border-sky-100',
+        btnColor: 'bg-[#3B82F6]',
+        route: '/(tabs)?service=logistics',
+    },
+];
 
-    gadgets: {
-        heroTitle: 'Gadgets & Electronics',
-        bannerTitle: 'Tech Mega Sale',
-        bannerSub: 'Up to 25% OFF top global brands ⚡',
-        bannerBadge: 'TECH MALL',
-        pills: ['All', 'Smartphones', 'Laptops', 'Audio', 'Wearables', 'Accessories'],
-        stores: [
-            { id: 'techworld', name: 'TechWorld Store', rating: '4.9', time: 'Same Day', verified: true, bg: 'bg-blue-600', logo: '📱' },
-            { id: 'slot', name: 'Slot Electronics', rating: '4.8', time: '1-2 hours', verified: true, bg: 'bg-red-600', logo: '💻' },
-            { id: 'pointek', name: 'Pointek Store', rating: '4.7', time: 'Same Day', verified: true, bg: 'bg-indigo-600', logo: '🎧' },
-        ],
-        items: [
-            { id: 'smartphones', name: 'Smartphones & iPhones', itemsCount: '1,450+ items', icon: '📱', bg: 'bg-blue-50', category: 'Smartphones' },
-            { id: 'tablets-ipads', name: 'Tablets & iPads', itemsCount: '420+ items', icon: '📲', bg: 'bg-blue-50', category: 'Smartphones' },
-            { id: 'laptops-macbooks', name: 'Laptops & MacBooks', itemsCount: '850+ items', icon: '💻', bg: 'bg-sky-50', category: 'Laptops' },
-            { id: 'headphones-earbuds', name: 'Headphones & Audio', itemsCount: '2,100+ items', icon: '🎧', bg: 'bg-indigo-50', category: 'Audio' },
-            { id: 'smartwatches', name: 'Smartwatches', itemsCount: '620+ items', icon: '⌚', bg: 'bg-purple-50', category: 'Wearables' },
-            { id: 'power-cables', name: 'Power Banks & Cables', itemsCount: '3,200+ items', icon: '🔌', bg: 'bg-emerald-50', category: 'Accessories' },
-        ],
-    },
+// 2. Popular Stores Dataset
+const popularStores = [
+    { id: 'shoprite', name: 'Shoprite', rating: '4.6', time: '20-30 min', logo: '🔴', logoBg: 'bg-red-50' },
+    { id: 'spar', name: 'Spar', rating: '4.5', time: '25-35 min', logo: '🌲', logoBg: 'bg-emerald-50' },
+    { id: 'kfc', name: 'KFC', rating: '4.7', time: '20-30 min', logo: '🍗', logoBg: 'bg-rose-50' },
+    { id: 'chicken-republic', name: 'Chicken Republic', rating: '4.6', time: '20-30 min', logo: '🐔', logoBg: 'bg-amber-50' },
+    { id: 'dominos', name: "Domino's Pizza", rating: '4.5', time: '20-30 min', logo: '🍕', logoBg: 'bg-blue-50' },
+    { id: 'ebeano', name: 'Prince Ebeano', rating: '4.4', time: '30-40 min', logo: '🛒', logoBg: 'bg-green-50' },
+];
 
-    marketplace: {
-        heroTitle: 'Marketplace Deals',
-        bannerTitle: 'Verified Stores',
-        bannerSub: 'Shop fashion, home & beauty 🛍️',
-        bannerBadge: 'MARKETPLACE',
-        pills: ['All', 'Fashion', 'Beauty', 'Home Living', 'Sports'],
-        stores: [
-            { id: 'jumia-express', name: 'Jumia Official', rating: '4.6', time: '1-2 Days', verified: true, bg: 'bg-amber-600', logo: '🛍️' },
-            { id: 'fashion-hub', name: 'Fashion Hub', rating: '4.8', time: 'Same Day', verified: true, bg: 'bg-pink-600', logo: '👗' },
-        ],
-        items: [
-            { id: 'womens-fashion', name: "Women's Fashion & Bags", itemsCount: '4,200+ items', icon: '👜', bg: 'bg-pink-50', category: 'Fashion' },
-            { id: 'mens-fashion', name: "Men's Wear & Shoes", itemsCount: '3,800+ items', icon: '👔', bg: 'bg-slate-50', category: 'Fashion' },
-            { id: 'beauty-skincare', name: 'Beauty & Skincare', itemsCount: '1,900+ items', icon: '💄', bg: 'bg-rose-50', category: 'Beauty' },
-            { id: 'home-kitchen', name: 'Home & Kitchen Decor', itemsCount: '2,400+ items', icon: '🛋️', bg: 'bg-amber-50', category: 'Home Living' },
-            { id: 'sports-fitness', name: 'Sports & Fitness Gear', itemsCount: '1,100+ items', icon: '⚽', bg: 'bg-emerald-50', category: 'Sports' },
-        ],
-    },
+// 3. Featured Vendors Dataset
+const featuredVendors = [
+    { id: 1, name: "Mama T's Kitchen", tag: 'African Dishes', rating: '4.9', time: '20-30 min', priceTier: '₦₦', emoji: '🍲', bg: 'bg-amber-100' },
+    { id: 2, name: 'Healthy Bites', tag: 'Salads & Smoothies', rating: '4.8', time: '15-25 min', priceTier: '₦₦', emoji: '🥗', bg: 'bg-emerald-100' },
+    { id: 3, name: 'Grill Master', tag: 'Grills & Shawarma', rating: '4.7', time: '20-30 min', priceTier: '₦₦', emoji: '🥩', bg: 'bg-orange-100' },
+    { id: 4, name: 'The Salad Bar', tag: 'Healthy Food', rating: '4.8', time: '15-25 min', priceTier: '₦₦', emoji: '🥑', bg: 'bg-teal-100' },
+];
 
-    bills: {
-        heroTitle: 'Bill Payments',
-        bannerTitle: 'Utility Top-Up',
-        bannerSub: 'Earn 5% cashback on all bills 💰',
-        bannerBadge: 'PAY BILLS',
-        pills: ['All', 'Utilities', 'Telecom'],
-        stores: [],
-        items: [
-            { id: 'electricity', name: 'Electricity Tokens', itemsCount: 'AEDC, EKEDC, IKEDC', icon: '💡', bg: 'bg-amber-50', category: 'Utilities' },
-            { id: 'water', name: 'Water Utilities', itemsCount: 'Instant Recharge', icon: '💧', bg: 'bg-blue-50', category: 'Utilities' },
-            { id: 'cable-tv', name: 'Cable TV Renewal', itemsCount: 'DStv, GOtv, StarTimes', icon: '📺', bg: 'bg-purple-50', category: 'Telecom' },
-            { id: 'airtime-data', name: 'Airtime & Data Bundles', itemsCount: 'MTN, Airtel, Glo, 9mobile', icon: '📲', bg: 'bg-emerald-50', category: 'Telecom' },
-        ],
-    },
-
-    logistics: {
-        heroTitle: 'Logistics Services',
-        bannerTitle: 'Express Shipping',
-        bannerSub: 'Send parcels & track live 🚚',
-        bannerBadge: 'LOGISTICS',
-        pills: ['All', 'Express', 'Freight'],
-        stores: [],
-        items: [
-            { id: 'parcel-delivery', name: 'City Parcel Delivery', itemsCount: 'Same Day Dispatch', icon: '📦', bg: 'bg-emerald-50', category: 'Express' },
-            { id: 'bike-courier', name: 'Bike Dispatch Rider', itemsCount: 'Express 2-Hour Courier', icon: '🛵', bg: 'bg-amber-50', category: 'Express' },
-            { id: 'truck-shipping', name: 'Heavy Truck Movers', itemsCount: 'Interstate Haulage', icon: '🚚', bg: 'bg-blue-50', category: 'Freight' },
-            { id: 'air-freight', name: 'Air Freight Cargo', itemsCount: 'Global Express', icon: '✈️', bg: 'bg-indigo-50', category: 'Freight' },
-        ],
-    },
-};
+// 4. Trending Products Dataset
+const trendingProducts = [
+    { id: 1, name: 'Indomie Chicken', price: '₦350', image: require('@/assets/images/prod-indomie.png') },
+    { id: 2, name: 'Coca Cola 50cl', price: '₦600', image: require('@/assets/images/prod-oil.png') },
+    { id: 3, name: 'Fresh Tomatoes (1kg)', price: '₦1,200', image: require('@/assets/images/prod-tomatoes.png') },
+    { id: 4, name: 'Milo 400g', price: '₦1,800', image: require('@/assets/images/prod-milo.png') },
+    { id: 5, name: 'Stallion Rice 50kg', price: '₦68,500', image: require('@/assets/images/prod-rice.png') },
+];
 
 export default function CategoriesScreen() {
     const router = useRouter();
-    const { service } = useLocalSearchParams<{ service?: string }>();
-
-    // Resolve dataset
-    const activeServiceKey = (service as string) in categoryDatasets ? (service as string) : 'food';
-    const currentDataset = categoryDatasets[activeServiceKey];
-
-    const [activePill, setActivePill] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
-
-    // Filter category items
-    const filteredCategories = currentDataset.items.filter((item) => {
-        const matchesPill = activePill === 'All' || item.category === activePill;
-        const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesPill && matchesSearch;
-    });
-
-    const handleCategoryPress = (categoryId: string) => {
-        router.push({
-            pathname: `/(tabs)/category/${categoryId}` as any,
-            params: { service: activeServiceKey },
-        });
-    };
-
-    const handleStorePress = (storeId: string) => {
-        router.push(`/store/${storeId}` as any);
-    };
+    const [cartCount] = useState(2);
 
     return (
         <SafeAreaView style={tw`flex-1 bg-white`}>
-            {/* 1. Standard Header Bar */}
-            <View style={tw`px-4 pt-2 pb-2 flex-row items-center justify-between border-b border-gray-100`}>
-                <TouchableOpacity
-                    style={tw`flex-row items-center gap-1.5 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full flex-1 mr-3`}
-                    onPress={() => router.push('/(location)/index')}
-                    activeOpacity={0.8}
-                >
-                    <MapPin size={16} color="#0A8A3A" />
-                    <Text style={tw`text-xs font-bold text-gray-900 flex-1`} numberOfLines={1}>
-                        23 Adekunle Street, Yaba, Lagos
+            {/* 1. Header Bar with User Greeting & Badges */}
+            <View style={tw`px-4 pt-2 pb-2 flex-row items-center justify-between`}>
+                <View style={tw`flex-1`}>
+                    <Text style={tw`text-xs text-gray-500 font-medium`}>Good Afternoon,</Text>
+                    <Text style={tw`text-2xl font-bold text-gray-950 tracking-tight`}>
+                        George 👋
                     </Text>
-                    <ChevronDown size={14} color="#171717" />
-                </TouchableOpacity>
 
-                <View style={tw`flex-row items-center gap-2.5`}>
-                    <TouchableOpacity style={tw`relative w-9 h-9 items-center justify-center bg-gray-50 rounded-full`}>
-                        <Bell size={18} color="#171717" />
-                        <View style={tw`absolute top-1.5 right-1.5 w-2 h-2 bg-market-green rounded-full`} />
+                    {/* Location Delivery Dropdown */}
+                    <TouchableOpacity
+                        style={tw`flex-row items-center gap-1 mt-1`}
+                        onPress={() => router.push('/(location)/index')}
+                        activeOpacity={0.8}
+                    >
+                        <MapPin size={14} color="#0A8A3A" />
+                        <Text style={tw`text-xs font-bold text-gray-800`}>Lekki Phase 1, Lagos</Text>
+                        <ChevronDown size={14} color="#171717" />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Right Action Icons (Notifications & Cart) */}
+                <View style={tw`flex-row items-center gap-3`}>
+                    <TouchableOpacity style={tw`relative w-10 h-10 items-center justify-center bg-gray-50 rounded-full`}>
+                        <Bell size={20} color="#171717" />
+                        <View style={tw`absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full items-center justify-center border border-white`}>
+                            <Text style={tw`text-white text-[9px] font-bold`}>3</Text>
+                        </View>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={tw`relative w-9 h-9 items-center justify-center bg-gray-50 rounded-full`}
+                        style={tw`relative w-10 h-10 items-center justify-center bg-gray-50 rounded-full`}
                         onPress={() => router.push('/cart')}
                     >
-                        <ShoppingBag size={18} color="#171717" />
-                        <View style={tw`absolute -top-1 -right-1 w-4.5 h-4.5 bg-market-green rounded-full items-center justify-center border-2 border-white`}>
-                            <Text style={tw`text-white text-[9px] font-bold`}>2</Text>
+                        <ShoppingBag size={20} color="#171717" />
+                        <View style={tw`absolute top-1 right-1 w-4 h-4 bg-market-green rounded-full items-center justify-center border border-white`}>
+                            <Text style={tw`text-white text-[9px] font-bold`}>{cartCount}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
-                {/* 2. Search Input */}
-                <View style={tw`px-4 mt-3 mb-2 flex-row items-center gap-2`}>
-                    <View style={tw`flex-1 flex-row items-center border border-gray-200 rounded-2xl px-3.5 h-11.5 bg-gray-50/50 shadow-2xs`}>
-                        <Search size={18} color="#0A8A3A" style={tw`mr-2.5`} />
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-12`}>
+                {/* 2. Search & Filter Input Bar */}
+                <View style={tw`px-4 my-3 flex-row items-center gap-2.5`}>
+                    <View style={tw`flex-1 flex-row items-center border border-gray-200 rounded-2xl px-3.5 h-12 bg-gray-50/50`}>
+                        <Search size={18} color="#9CA3AF" style={tw`mr-2.5`} />
                         <TextInput
                             style={tw`flex-1 text-xs text-gray-900 h-full font-medium`}
-                            placeholder={`Search in ${currentDataset.heroTitle}...`}
+                            placeholder="Search stores, vendors, products or dishes..."
                             placeholderTextColor="#9CA3AF"
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                         />
-                        {searchQuery.length > 0 && (
-                            <TouchableOpacity onPress={() => setSearchQuery('')}>
-                                <X size={16} color="#9CA3AF" />
-                            </TouchableOpacity>
-                        )}
                     </View>
 
-                    <TouchableOpacity style={tw`w-11.5 h-11.5 rounded-2xl bg-emerald-50 border border-emerald-100 items-center justify-center`}>
-                        <Filter size={18} color="#0A8A3A" />
+                    <TouchableOpacity style={tw`w-12 h-12 rounded-2xl border border-gray-200 items-center justify-center bg-white shadow-2xs`}>
+                        <SlidersHorizontal size={18} color="#0A8A3A" />
                     </TouchableOpacity>
                 </View>
 
-                {/* 3. Featured Vendor Stores Section (NEW!) */}
-                {currentDataset.stores.length > 0 && (
-                    <View style={tw`mt-2 mb-3`}>
-                        <View style={tw`flex-row justify-between items-center px-4 mb-2.5`}>
-                            <Text style={tw`text-sm font-extrabold text-gray-950`}>Featured Stores Near You</Text>
-                            <TouchableOpacity>
-                                <Text style={tw`text-xs font-bold text-market-green`}>See all</Text>
-                            </TouchableOpacity>
+                {/* 3. Hero Promo Banner ("DEALS NEAR YOU") */}
+                <View style={tw`mx-4 my-2 bg-[#064E3B] rounded-3xl p-5 relative overflow-hidden flex-row items-center justify-between shadow-xs`}>
+                    <View style={tw`w-3/5 z-10 pr-2`}>
+                        <View style={tw`flex-row items-center gap-1 mb-1`}>
+                            <Text style={tw`text-xs`}>🔥</Text>
+                            <Text style={tw`text-[10px] font-bold text-amber-300 uppercase tracking-wider`}>Deals Near You</Text>
                         </View>
 
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3`}>
-                            {currentDataset.stores.map((store) => (
-                                <TouchableOpacity
-                                    key={store.id}
-                                    onPress={() => handleStorePress(store.id)}
-                                    style={tw`w-40 bg-white rounded-2xl border border-gray-100 p-3 shadow-2xs`}
-                                    activeOpacity={0.85}
-                                >
-                                    <View style={tw`items-center my-1.5`}>
-                                        <View style={tw`w-12 h-12 rounded-full ${store.bg} items-center justify-center border-2 border-white shadow-xs`}>
-                                            <Text style={tw`text-xl`}>{store.logo}</Text>
-                                        </View>
-                                    </View>
-
-                                    <View style={tw`flex-row items-center justify-center gap-1 mt-1`}>
-                                        <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>{store.name}</Text>
-                                        {store.verified && (
-                                            <View style={tw`w-3.5 h-3.5 rounded-full bg-market-green items-center justify-center`}>
-                                                <Text style={tw`text-white text-[8px] font-bold`}>✓</Text>
-                                            </View>
-                                        )}
-                                    </View>
-
-                                    <View style={tw`flex-row items-center justify-center gap-1 mt-1`}>
-                                        <Star size={10} color="#D97706" fill="#D97706" />
-                                        <Text style={tw`text-[10px] font-bold text-gray-700`}>{store.rating}</Text>
-                                        <Text style={tw`text-gray-300`}>•</Text>
-                                        <Text style={tw`text-[10px] text-gray-400 font-semibold`}>{store.time}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    </View>
-                )}
-
-                {/* 4. Horizontal Category Filter Pills */}
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-2 my-2`}>
-                    {currentDataset.pills.map((pill) => {
-                        const isSelected = activePill === pill;
-
-                        return (
-                            <TouchableOpacity
-                                key={pill}
-                                onPress={() => setActivePill(pill)}
-                                style={tw`px-4 py-2 rounded-xl border ${isSelected
-                                        ? 'bg-market-green border-market-green shadow-xs'
-                                        : 'bg-gray-50 border-gray-200'
-                                    }`}
-                                activeOpacity={0.8}
-                            >
-                                <Text
-                                    style={tw`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-700'
-                                        }`}
-                                >
-                                    {pill}
-                                </Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </ScrollView>
-
-                {/* 5. Title Row & Count Badge */}
-                <View style={tw`px-4 mt-2 mb-2 flex-row items-center justify-between`}>
-                    <Text style={tw`text-base font-extrabold text-gray-950`}>
-                        {activePill === 'All' ? currentDataset.heroTitle : activePill}
-                    </Text>
-                    <View style={tw`bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100`}>
-                        <Text style={tw`text-[10px] font-bold text-market-green`}>
-                            {filteredCategories.length} Categories
+                        <Text style={tw`text-2xl font-extrabold text-white leading-7`}>
+                            Up to <Text style={tw`text-amber-300`}>40% OFF</Text>
                         </Text>
+                        <Text style={tw`text-xs text-white/80 font-medium mt-0.5 leading-4`}>
+                            on groceries & more
+                        </Text>
+
+                        <TouchableOpacity
+                            style={tw`bg-white px-4 py-2 rounded-full flex-row items-center gap-1 self-start mt-3.5 shadow-xs`}
+                            onPress={() => router.push('/(tabs)/category-detail')}
+                            activeOpacity={0.9}
+                        >
+                            <Text style={tw`text-gray-950 text-xs font-bold`}>Shop Deals</Text>
+                            <ChevronDown size={14} color="#171717" style={{ transform: [{ rotate: '-90deg' }] }} />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Banner Hero Image */}
+                    <View style={tw`w-2/5 items-center justify-center relative`}>
+                        <Image
+                            source={require('@/assets/images/grocery-bag-hero.png')}
+                            style={tw`w-32 h-32`}
+                            resizeMode="contain"
+                        />
+                    </View>
+
+                    {/* Carousel Pagination Dots */}
+                    <View style={tw`absolute bottom-2.5 left-1/2 -ml-4 flex-row items-center gap-1`}>
+                        <View style={tw`w-2 h-2 rounded-full bg-white`} />
+                        <View style={tw`w-1.5 h-1.5 rounded-full bg-white/40`} />
+                        <View style={tw`w-1.5 h-1.5 rounded-full bg-white/40`} />
                     </View>
                 </View>
 
-                {/* 6. Standard 2-Column Responsive Cards Grid */}
-                <View style={tw`px-4 flex-row flex-wrap justify-between gap-y-3.5 my-1`}>
-                    {filteredCategories.length > 0 ? (
-                        filteredCategories.map((cat) => (
+                {/* 4. "What would you like today?" Service Categories Grid */}
+                <View style={tw`px-4 mt-5 mb-3`}>
+                    <Text style={tw`text-base font-extrabold text-gray-950 mb-3`}>
+                        What would you like today?
+                    </Text>
+
+                    <View style={tw`flex-row flex-wrap justify-between gap-y-3`}>
+                        {mainServices.map((service) => (
                             <TouchableOpacity
-                                key={cat.id}
-                                onPress={() => handleCategoryPress(cat.id)}
-                                style={tw`w-[48.5%] bg-white border border-gray-100 rounded-3xl p-3.5 shadow-2xs justify-between`}
-                                activeOpacity={0.85}
+                                key={service.id}
+                                onPress={() => router.push(service.route as any)}
+                                style={tw`w-[48.5%] ${service.bgColor} border ${service.borderColor} rounded-3xl p-3.5 justify-between h-36 relative overflow-hidden shadow-2xs`}
+                                activeOpacity={0.88}
                             >
-                                <View style={tw`w-12 h-12 rounded-2xl ${cat.bg} items-center justify-center mb-3 border border-gray-100/80`}>
-                                    <Text style={tw`text-2xl`}>{cat.icon}</Text>
+                                <View style={tw`w-12 h-12 rounded-2xl bg-white/80 items-center justify-center shadow-2xs`}>
+                                    <Text style={tw`text-2xl`}>{service.icon}</Text>
                                 </View>
 
-                                <View style={tw`mb-3`}>
-                                    <Text style={tw`text-sm font-bold text-gray-900 leading-4`} numberOfLines={2}>
-                                        {cat.name}
+                                <View style={tw`pr-6`}>
+                                    <Text style={tw`text-sm font-bold text-gray-900 leading-4`}>
+                                        {service.title}
                                     </Text>
-                                    <Text style={tw`text-[10px] text-gray-400 font-semibold mt-1`} numberOfLines={1}>
-                                        {cat.itemsCount}
+                                    <Text style={tw`text-[10px] text-gray-500 font-medium mt-1 leading-3`} numberOfLines={2}>
+                                        {service.sub}
                                     </Text>
                                 </View>
 
-                                <View style={tw`flex-row items-center justify-between pt-2 border-t border-gray-50`}>
-                                    <Text style={tw`text-[10px] font-bold text-market-green`}>Explore</Text>
-                                    <ChevronRight size={14} color="#0A8A3A" />
+                                {/* Circular Action Arrow Button */}
+                                <View style={tw`absolute bottom-3 right-3 w-7 h-7 rounded-full ${service.btnColor} items-center justify-center shadow-xs`}>
+                                    <ArrowRight size={14} color="white" />
                                 </View>
                             </TouchableOpacity>
-                        ))
-                    ) : (
-                        <View style={tw`w-full py-12 items-center justify-center`}>
-                            <Text style={tw`text-3xl mb-2`}>🔍</Text>
-                            <Text style={tw`text-sm font-bold text-gray-800`}>No categories found</Text>
-                            <Text style={tw`text-xs text-gray-400 font-medium mt-0.5`}>Try searching for another keyword</Text>
-                        </View>
-                    )}
+                        ))}
+                    </View>
+                </View>
+
+                {/* 5. Popular Stores Section */}
+                <View style={tw`mt-5 mb-2`}>
+                    <View style={tw`flex-row justify-between items-center px-4 mb-3`}>
+                        <Text style={tw`text-base font-extrabold text-gray-950`}>Popular Stores</Text>
+                        <TouchableOpacity onPress={() => router.push('/stores')}>
+                            <Text style={tw`text-xs font-bold text-market-green`}>See all</Text>
+                        </TouchableOpacity>
+                    </View>
+
+
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3`}>
+                        {popularStores.map((store) => (
+                            <TouchableOpacity
+                                key={store.id}
+                                onPress={() => router.push(`/store/${store.id}` as any)}
+                                style={tw`w-28 bg-white rounded-2xl border border-gray-100 p-3 items-center justify-between shadow-2xs`}
+                                activeOpacity={0.85}
+                            >
+                                <View style={tw`w-12 h-12 rounded-2xl ${store.logoBg} items-center justify-center border border-gray-100 shadow-2xs my-1`}>
+                                    <Text style={tw`text-2xl`}>{store.logo}</Text>
+                                </View>
+
+                                <Text style={tw`text-xs font-bold text-gray-900 text-center mt-1`} numberOfLines={1}>
+                                    {store.name}
+                                </Text>
+
+                                <View style={tw`flex-row items-center gap-1 mt-1`}>
+                                    <Text style={tw`text-[10px] font-bold text-gray-700`}>{store.rating}</Text>
+                                    <Star size={10} color="#D97706" fill="#D97706" />
+                                </View>
+
+                                <Text style={tw`text-[9px] text-gray-400 font-semibold mt-0.5`}>
+                                    {store.time}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
+                {/* 6. Featured Vendors Section */}
+                <View style={tw`mt-5 mb-2`}>
+                    <View style={tw`flex-row justify-between items-center px-4 mb-3`}>
+                        <Text style={tw`text-base font-extrabold text-gray-950`}>Featured Vendors</Text>
+                        <TouchableOpacity onPress={() => router.push('/vendors')}>
+                            <Text style={tw`text-xs font-bold text-market-green`}>See all</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {/* ... */}
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3.5`}>
+                        {featuredVendors.map((vendor) => (
+                            <TouchableOpacity
+                                key={vendor.id}
+                                style={tw`w-48 bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-2xs`}
+                                activeOpacity={0.88}
+                            >
+                                {/* Hero Vendor Banner Image */}
+                                <View style={tw`h-28 ${vendor.bg} items-center justify-center relative`}>
+                                    <Text style={tw`text-5xl`}>{vendor.emoji}</Text>
+
+                                    {/* Rating Badge */}
+                                    <View style={tw`absolute bottom-2 left-2 bg-black/60 px-2 py-0.5 rounded-full flex-row items-center gap-1`}>
+                                        <Star size={10} color="#FACC15" fill="#FACC15" />
+                                        <Text style={tw`text-[10px] font-bold text-white`}>{vendor.rating}</Text>
+                                    </View>
+                                </View>
+
+                                <View style={tw`p-3`}>
+                                    <Text style={tw`text-xs font-bold text-gray-900`} numberOfLines={1}>
+                                        {vendor.name}
+                                    </Text>
+                                    <Text style={tw`text-[10px] text-gray-400 font-medium mt-0.5`}>
+                                        {vendor.tag}
+                                    </Text>
+                                    <Text style={tw`text-[10px] font-bold text-gray-600 mt-1`}>
+                                        {vendor.time} • <Text style={tw`text-market-green`}>{vendor.priceTier}</Text>
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
+                {/* 7. Trending Products Section */}
+                <View style={tw`mt-5 mb-2`}>
+                    <View style={tw`flex-row justify-between items-center px-4 mb-3`}>
+                        <Text style={tw`text-base font-extrabold text-gray-950`}>Trending Products</Text>
+                        <TouchableOpacity onPress={() => router.push('/trending')}>
+                            <Text style={tw`text-xs font-bold text-market-green`}>See all</Text>
+                        </TouchableOpacity>
+                    </View>
+
+
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-4 gap-3`}>
+                        {trendingProducts.map((prod) => (
+                            <View
+                                key={prod.id}
+                                style={tw`w-32 bg-white rounded-2xl border border-gray-100 p-2.5 shadow-2xs justify-between`}
+                            >
+                                <TouchableOpacity
+                                    style={tw`items-center justify-center h-24 bg-gray-50/50 rounded-xl p-1 mb-2`}
+                                    onPress={() => router.push(`/product/${prod.id}`)}
+                                >
+                                    <Image source={prod.image} style={tw`w-16 h-16`} resizeMode="contain" />
+                                </TouchableOpacity>
+
+                                <View>
+                                    <Text style={tw`text-xs font-bold text-gray-900 leading-4`} numberOfLines={2}>
+                                        {prod.name}
+                                    </Text>
+
+                                    <View style={tw`flex-row items-center justify-between mt-2`}>
+                                        <Text style={tw`text-xs font-extrabold text-gray-950`}>{prod.price}</Text>
+
+                                        <TouchableOpacity style={tw`w-6.5 h-6.5 rounded-full bg-market-green items-center justify-center shadow-2xs`}>
+                                            <Plus size={14} color="white" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+                    </ScrollView>
                 </View>
             </ScrollView>
         </SafeAreaView>
