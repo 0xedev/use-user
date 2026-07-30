@@ -1,7 +1,7 @@
-import FinalCustomerScreen from '@/components/FinalCustomerScreen';
+import ApiConnectedCustomerScreen from '@/components/ApiConnectedCustomerScreen';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function CustomerFeatureRoute() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  return <FinalCustomerScreen slug={slug ?? 'schedule-delivery'} />;
+  return <ApiConnectedCustomerScreen slug={slug ?? 'schedule-delivery'} />;
 }
